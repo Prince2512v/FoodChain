@@ -1,0 +1,11 @@
+node_modules/
+bin/
+obj/
+artifacts/
+cache/
+.env
+.DS_Store
+*.mdf
+*.ldf
+*.sqlite
+*.sqlite-journal

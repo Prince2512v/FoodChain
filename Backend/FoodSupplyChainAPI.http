@@ -1,0 +1,43 @@
+@FoodSupplyChainAPI_HostAddress = http://localhost:5160
+
+### Login as Farmer (Get JWT)
+POST {{FoodSupplyChainAPI_HostAddress}}/api/auth/login
+Content-Type: application/json
+
+{
+    "email": "farmer@example.com",
+    "password": "Password123!"
+}
+
+### Add Product (Farmer)
+POST {{FoodSupplyChainAPI_HostAddress}}/api/farmer/product
+Authorization: Bearer {{token}}
+Content-Type: application/json
+
+{
+    "productName": "Organic Braeburn Apples",
+    "cropType": "Fruit",
+    "quantity": 500,
+    "unit": "kg",
+    "harvestDate": "2026-04-09",
+    "farmingMethod": "Organic",
+    "fertilizerUsed": "Natural Compost",
+    "locationLat": "34.0522",
+    "locationLong": "-118.2437",
+    "address": "Green Valley Farm, CA",
+    "batchId": "BATCH-APPLE-001"
+}
+
+### Get Farmer Products
+GET {{FoodSupplyChainAPI_HostAddress}}/api/farmer/products
+Authorization: Bearer {{token}}
+
+### Update Blockchain Hash
+POST {{FoodSupplyChainAPI_HostAddress}}/api/farmer/blockchain/upload
+Authorization: Bearer {{token}}
+Content-Type: application/json
+
+{
+    "batchId": "BATCH-APPLE-001",
+    "txHash": "0x1234567890abcdef1234567890abcdef1234567890abcdef1234567890abcdef"
+}

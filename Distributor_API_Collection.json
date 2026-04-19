@@ -1,0 +1,316 @@
+{
+	"info": {
+		"_postman_id": "4cf57d1f-d7a6-4cef-a48d-2cae2130d05b",
+		"name": "Food Supply Chain - Distributor Module",
+		"description": "API collection for the Distributor module of the Blockchain Food Supply Chain System.",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+	},
+	"item": [
+		{
+			"name": "Get Available Shipments",
+			"request": {
+				"method": "GET",
+				"header": [
+					{
+						"key": "Authorization",
+						"value": "Bearer {{token}}",
+						"type": "text"
+					}
+				],
+				"url": {
+					"raw": "http://localhost:5000/api/distributor/available-shipments",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "5000",
+					"path": [
+						"api",
+						"distributor",
+						"available-shipments"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Accept Shipment",
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "Authorization",
+						"value": "Bearer {{token}}",
+						"type": "text"
+					}
+				],
+				"url": {
+					"raw": "http://localhost:5000/api/distributor/accept/1",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "5000",
+					"path": [
+						"api",
+						"distributor",
+						"accept",
+						"1"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Save Shipment Details",
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "Authorization",
+						"value": "Bearer {{token}}",
+						"type": "text"
+					},
+					{
+						"key": "Content-Type",
+						"value": "application/json",
+						"type": "text"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"shipmentId\": 1,\n    \"vehicleNumber\": \"MH-12-AB-1234\",\n    \"driverName\": \"John Doe\",\n    \"driverContact\": \"+91 9876543210\",\n    \"transportType\": \"Cold Storage Truck\",\n    \"dispatchDate\": \"2026-04-09T20:00:00Z\"\n}"
+				},
+				"url": {
+					"raw": "http://localhost:5000/api/distributor/shipment-details",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "5000",
+					"path": [
+						"api",
+						"distributor",
+						"shipment-details"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Update Location",
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "Authorization",
+						"value": "Bearer {{token}}",
+						"type": "text"
+					},
+					{
+						"key": "Content-Type",
+						"value": "application/json",
+						"type": "text"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"shipmentId\": 1,\n    \"latitude\": 19.076090,\n    \"longitude\": 72.877426,\n    \"locationName\": \"Mumbai Hub\",\n    \"source\": \"GPS\"\n}"
+				},
+				"url": {
+					"raw": "http://localhost:5000/api/distributor/location-update",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "5000",
+					"path": [
+						"api",
+						"distributor",
+						"location-update"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Record Storage Condition",
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "Authorization",
+						"value": "Bearer {{token}}",
+						"type": "text"
+					},
+					{
+						"key": "Content-Type",
+						"value": "application/json",
+						"type": "text"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"shipmentId\": 1,\n    \"temperature\": 4.5,\n    \"humidity\": 65.0,\n    \"storageType\": \"Cold\"\n}"
+				},
+				"url": {
+					"raw": "http://localhost:5000/api/distributor/storage",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "5000",
+					"path": [
+						"api",
+						"distributor",
+						"storage"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Update Delivery Status",
+			"request": {
+				"method": "PUT",
+				"header": [
+					{
+						"key": "Authorization",
+						"value": "Bearer {{token}}",
+						"type": "text"
+					},
+					{
+						"key": "Content-Type",
+						"value": "application/json",
+						"type": "text"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"status\": \"Out for Delivery\"\n}"
+				},
+				"url": {
+					"raw": "http://localhost:5000/api/distributor/status/1",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "5000",
+					"path": [
+						"api",
+						"distributor",
+						"status",
+						"1"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Record Blockchain TX",
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "Authorization",
+						"value": "Bearer {{token}}",
+						"type": "text"
+					},
+					{
+						"key": "Content-Type",
+						"value": "application/json",
+						"type": "text"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"batchId\": \"BATCH-001\",\n    \"txHash\": \"0x123...abc\",\n    \"status\": \"Delivered\"\n}"
+				},
+				"url": {
+					"raw": "http://localhost:5000/api/blockchain/shipment",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "5000",
+					"path": [
+						"api",
+						"blockchain",
+						"shipment"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Get Shipment History",
+			"request": {
+				"method": "GET",
+				"header": [
+					{
+						"key": "Authorization",
+						"value": "Bearer {{token}}",
+						"type": "text"
+					}
+				],
+				"url": {
+					"raw": "http://localhost:5000/api/distributor/history/BATCH-001",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "5000",
+					"path": [
+						"api",
+						"distributor",
+						"history",
+						"BATCH-001"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Report Issue",
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "Authorization",
+						"value": "Bearer {{token}}",
+						"type": "text"
+					},
+					{
+						"key": "Content-Type",
+						"value": "application/json",
+						"type": "text"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"shipmentId\": 1,\n    \"issueType\": \"Delay\",\n    \"description\": \"Road blockage due to landslides\",\n    \"severity\": \"High\"\n}"
+				},
+				"url": {
+					"raw": "http://localhost:5000/api/distributor/report-issue",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "5000",
+					"path": [
+						"api",
+						"distributor",
+						"report-issue"
+					]
+				}
+			},
+			"response": []
+		}
+	],
+	"variable": [
+		{
+			"key": "token",
+			"value": "YOUR_JWT_TOKEN_HERE"
+		}
+	]
+}

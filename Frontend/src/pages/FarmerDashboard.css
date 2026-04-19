@@ -1,0 +1,391 @@
+/* ================================================================
+   FARMER DASHBOARD — CSS
+   "Verdant Glass" — Dark glassmorphism theme with Emerald-Amber palette
+   ================================================================ */
+
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap');
+
+/* ── Reset & Base ── */
+.farmer-dashboard {
+  font-family: 'Inter', sans-serif;
+  min-height: 100vh;
+  background: radial-gradient(circle at 50% 50%, #0a2310 0%, #05160b 60%, #020a06 100%);
+  color: #e2f3e8;
+  overflow-x: hidden;
+}
+
+.farmer-dashboard::before {
+  content: '';
+  position: fixed;
+  top: 0; left: 0; width: 100%; height: 100%;
+  background: 
+    radial-gradient(circle at 15% 20%, rgba(16, 185, 129, 0.05) 0%, transparent 40%),
+    radial-gradient(circle at 85% 80%, rgba(245, 158, 11, 0.05) 0%, transparent 40%);
+  pointer-events: none;
+  z-index: 0;
+}
+
+/* ── Top Bar ── */
+.farmer-topbar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 1.2rem 2rem;
+  background: rgba(255, 255, 255, 0.03);
+  backdrop-filter: blur(12px);
+  border-bottom: 1px solid rgba(16, 185, 129, 0.2);
+  position: sticky;
+  top: 0;
+  z-index: 100;
+}
+
+.farmer-topbar__brand {
+  display: flex;
+  align-items: center;
+  gap: 0.9rem;
+}
+
+.farmer-topbar__logo {
+  font-size: 2.2rem;
+  filter: drop-shadow(0 0 12px #10b981);
+}
+
+.farmer-topbar__title {
+  font-size: 1.4rem;
+  font-weight: 800;
+  background: linear-gradient(90deg, #10b981, #f59e0b);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+  margin: 0;
+}
+
+.farmer-topbar__subtitle {
+  font-size: 0.72rem;
+  color: #718a7c;
+  margin: 0;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+.farmer-topbar__user {
+  display: flex;
+  align-items: center;
+  gap: 0.8rem;
+}
+
+.farmer-topbar__avatar {
+  width: 38px;
+  height: 38px;
+  border-radius: 50%;
+  background: linear-gradient(135deg, #10b981, #059669);
+  display: grid;
+  place-items: center;
+  font-weight: 700;
+  font-size: 1rem;
+  color: #fff;
+}
+
+.farmer-topbar__name {
+  font-weight: 600;
+  font-size: 0.9rem;
+  margin: 0;
+}
+
+.farmer-topbar__role {
+  font-size: 0.72rem;
+  color: #10b981;
+  margin: 0;
+  font-weight: 500;
+}
+
+.farmer-topbar__logout {
+  background: rgba(239, 68, 68, 0.15);
+  color: #f87171;
+  border: 1px solid rgba(239, 68, 68, 0.4);
+  padding: 0.45rem 1.1rem;
+  border-radius: 8px;
+  cursor: pointer;
+  font-size: 0.82rem;
+  font-weight: 600;
+  transition: all 0.2s;
+}
+
+.farmer-topbar__logout:hover {
+  background: rgba(239, 68, 68, 0.25);
+  transform: translateY(-1px);
+}
+
+/* ── Stats Banner ── */
+.farmer-stats {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 1rem;
+  padding: 1.5rem 2rem;
+}
+
+@media (max-width: 900px) { .farmer-stats { grid-template-columns: repeat(2, 1fr); } }
+@media (max-width: 500px) { .farmer-stats { grid-template-columns: 1fr; } }
+
+.farmer-stat-card {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  background: rgba(255, 255, 255, 0.04);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-left: 3px solid var(--accent, #10b981);
+  border-radius: 12px;
+  padding: 1rem 1.2rem;
+  backdrop-filter: blur(8px);
+  transition: transform 0.2s, box-shadow 0.2s;
+}
+
+.farmer-stat-card:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 12px 30px rgba(0,0,0,0.5), 0 0 15px rgba(16, 185, 129, 0.1);
+  border-color: rgba(16, 185, 129, 0.4);
+}
+
+.farmer-stat-card__icon { 
+    font-size: 2.2rem; 
+    filter: drop-shadow(0 0 8px var(--accent));
+}
+.farmer-stat-card__label { font-size: 0.7rem; color: #718a7c; margin: 0; font-weight: 600; text-transform: uppercase; letter-spacing: 0.1em; }
+.farmer-stat-card__value { font-size: 1.4rem; color: #fff; margin: 0; font-weight: 800; letter-spacing: -0.02em; }
+
+/* ── Tab Navigation ── */
+.farmer-tabs {
+  display: flex;
+  gap: 0.4rem;
+  padding: 0 2rem;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.06);
+  overflow-x: auto;
+}
+
+.farmer-tab {
+  background: transparent;
+  border: none;
+  color: #718a7c;
+  padding: 0.9rem 1.4rem;
+  cursor: pointer;
+  font-size: 0.85rem;
+  font-weight: 500;
+  font-family: 'Inter', sans-serif;
+  border-bottom: 2px solid transparent;
+  transition: all 0.2s;
+  white-space: nowrap;
+}
+
+.farmer-tab:hover { color: #e2f3e8; }
+
+.farmer-tab--active {
+  color: #10b981;
+  border-bottom-color: #10b981;
+  font-weight: 600;
+}
+
+/* ── Content Wrapper ── */
+.farmer-content { padding: 1.5rem 2rem 3rem; }
+
+/* ── Harvest Cards ── */
+.farmer-harvest-list {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+  gap: 1.2rem;
+}
+
+.farmer-harvest-card {
+  background: rgba(255, 255, 255, 0.03);
+  border: 1px solid rgba(255, 255, 255, 0.06);
+  border-radius: 16px;
+  padding: 1.5rem;
+  transition: all 0.2s ease;
+  position: relative;
+  overflow: hidden;
+}
+
+.farmer-harvest-card:hover {
+  border-color: rgba(16, 185, 129, 0.4);
+  transform: translateY(-4px);
+  box-shadow: 0 12px 30px rgba(0, 0, 0, 0.4);
+}
+
+.farmer-harvest-card::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 4px;
+  height: 100%;
+  background: var(--status-color, #10b981);
+  opacity: 0.6;
+}
+
+.farmer-harvest-card__header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  margin-bottom: 1rem;
+}
+
+.farmer-harvest-card__batch {
+  font-family: monospace;
+  font-size: 0.8rem;
+  color: #f59e0b;
+  background: rgba(245, 158, 11, 0.1);
+  padding: 0.2rem 0.6rem;
+  border-radius: 4px;
+}
+
+.farmer-harvest-card__status {
+  font-size: 0.7rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  padding: 0.2rem 0.6rem;
+  border-radius: 20px;
+  background: var(--status-bg, rgba(16, 185, 129, 0.1));
+  color: var(--status-color, #10b981);
+}
+
+.farmer-harvest-card__title {
+  font-size: 1.1rem;
+  font-weight: 700;
+  margin: 0.5rem 0;
+  color: #fff;
+}
+
+.farmer-harvest-card__meta {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 0.8rem;
+  font-size: 0.82rem;
+  color: #718a7c;
+  margin-top: 1rem;
+}
+
+.farmer-harvest-card__meta-item {
+  display: flex;
+  align-items: center;
+  gap: 0.4rem;
+}
+
+.farmer-harvest-card__blockchain {
+  margin-top: 1.2rem;
+  padding-top: 1rem;
+  border-top: 1px solid rgba(255, 255, 255, 0.05);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.farmer-blockchain-link {
+  color: #10b981;
+  text-decoration: none;
+  font-size: 0.75rem;
+  font-weight: 600;
+}
+
+.farmer-blockchain-link:hover { text-decoration: underline; }
+
+.farmer-harvest-card__actions {
+  display: flex;
+  gap: 0.6rem;
+  margin-top: 1.2rem;
+}
+
+.farmer-btn-icon {
+  background: rgba(255, 255, 255, 0.05);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  color: #e2f3e8;
+  padding: 0.5rem;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: all 0.2s;
+  display: grid;
+  place-items: center;
+}
+
+.farmer-btn-icon:hover {
+  background: rgba(16, 185, 129, 0.1);
+  border-color: rgba(16, 185, 129, 0.3);
+  color: #10b981;
+}
+
+.farmer-btn-details {
+  flex: 1;
+  background: linear-gradient(90deg, #10b981, #059669);
+  border: none;
+  color: #fff;
+  padding: 0.5rem;
+  border-radius: 8px;
+  font-size: 0.85rem;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.farmer-btn-details:hover { opacity: 0.9; }
+
+/* ── Modal Design ── */
+.farmer-modal-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(0, 0, 0, 0.8);
+  backdrop-filter: blur(4px);
+  display: grid;
+  place-items: center;
+  z-index: 1000;
+}
+
+.farmer-modal {
+  background: #0a1f14;
+  border: 1px solid rgba(16, 185, 129, 0.3);
+  border-radius: 20px;
+  width: 90%;
+  max-width: 400px;
+  padding: 2rem;
+  text-align: center;
+  box-shadow: 0 20px 50px rgba(0, 0, 0, 0.5);
+}
+
+.farmer-modal h2 { margin-bottom: 0.5rem; color: #fff; }
+.farmer-modal p { color: #718a7c; font-size: 0.9rem; margin-bottom: 1.5rem; }
+
+.farmer-qr-container {
+  background: #fff;
+  padding: 1.5rem;
+  border-radius: 12px;
+  display: inline-block;
+  margin-bottom: 1.5rem;
+}
+
+.farmer-modal-close {
+  background: rgba(255, 255, 255, 0.05);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  color: #fff;
+  padding: 0.6rem 1.2rem;
+  border-radius: 8px;
+  cursor: pointer;
+  margin-top: 1rem;
+}
+
+/* ── Empty State ── */
+.farmer-empty {
+  text-align: center;
+  padding: 5rem 2rem;
+  color: #718a7c;
+}
+
+.farmer-empty-icon { font-size: 4rem; display: block; margin-bottom: 1rem; opacity: 0.5; }
+
+/* ── Loading ── */
+.farmer-loading {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 200px;
+  color: #10b981;
+  font-weight: 600;
+}

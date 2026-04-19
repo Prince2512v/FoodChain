@@ -1,0 +1,335 @@
+/* ================================================================
+   ADD PRODUCT (FARMER) — QUANTUM GLASS REDESIGN
+   Transitioned from dark "Verdant Glass" to "Quantum Glass" light morphic
+   ================================================================ */
+
+.add-product-page {
+  font-family: 'Inter', sans-serif;
+  min-height: 100vh;
+  background: var(--bg-main);
+  color: var(--text-dark);
+  position: relative;
+  overflow-x: hidden;
+  padding-top: 100px; /* Space for fixed navbar */
+}
+
+.add-product-container {
+  position: relative;
+  z-index: 1;
+  padding: 2rem 1rem;
+  display: flex;
+  justify-content: center;
+}
+
+.add-product-card {
+  background: var(--bg-glass);
+  backdrop-filter: var(--blur);
+  -webkit-backdrop-filter: var(--blur);
+  border: 1px solid var(--border-glass);
+  border-radius: 24px;
+  overflow: hidden;
+  display: flex;
+  width: 100%;
+  max-width: 1100px;
+  box-shadow: var(--shadow-xl);
+  animate: fade-in 0.6s ease-out;
+}
+
+/* ── Sidebar Steps ── */
+.add-product-sidebar {
+  background: rgba(255, 255, 255, 0.4);
+  border-right: 1px solid var(--border-glass);
+  padding: 3rem 2.5rem;
+  width: 320px;
+  display: flex;
+  flex-direction: column;
+  flex-shrink: 0;
+}
+
+.add-product-title {
+  font-size: 1.5rem;
+  font-weight: 800;
+  color: var(--text-dark);
+  margin-bottom: 3rem;
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+}
+
+.add-product-title i {
+  color: var(--primary);
+}
+
+.step-item {
+  display: flex;
+  align-items: center;
+  gap: 1.25rem;
+  margin-bottom: 2.25rem;
+  opacity: 0.4;
+  transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+  position: relative;
+}
+
+.step-item:not(:last-child)::after {
+  content: '';
+  position: absolute;
+  left: 17px;
+  top: 40px;
+  width: 2px;
+  height: 25px;
+  background: var(--border-glass);
+  transition: all 0.4s;
+}
+
+.step-item.active {
+  opacity: 1;
+}
+
+.step-item.completed {
+  opacity: 0.9;
+}
+
+.step-item.completed:not(:last-child)::after {
+  background: var(--primary);
+}
+
+.step-circle {
+  width: 36px;
+  height: 36px;
+  border-radius: 12px;
+  background: white;
+  display: grid;
+  place-items: center;
+  font-weight: 800;
+  font-size: 0.9rem;
+  color: var(--text-muted);
+  border: 1px solid var(--border-glass);
+  transition: all 0.4s;
+  z-index: 1;
+}
+
+.step-item.active .step-circle {
+  background: var(--primary);
+  color: white;
+  border-color: var(--primary);
+  box-shadow: 0 0 20px rgba(99, 102, 241, 0.3);
+  transform: scale(1.1);
+}
+
+.step-item.completed .step-circle {
+  background: var(--primary-light);
+  border-color: var(--primary);
+  color: var(--primary);
+}
+
+.step-label {
+  font-weight: 700;
+  font-size: 1rem;
+  color: var(--text-dark);
+}
+
+.progress-container {
+  margin-top: auto;
+  background: white;
+  padding: 1.25rem;
+  border-radius: 16px;
+  border: 1px solid var(--border-glass);
+}
+
+.progress-text {
+  font-size: 0.75rem;
+  font-weight: 800;
+  color: var(--text-muted);
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  margin-bottom: 0.75rem;
+}
+
+.progress-bar-bg {
+  height: 8px;
+  background: var(--bg-main);
+  border-radius: 10px;
+  overflow: hidden;
+}
+
+.progress-bar-fill {
+  height: 100%;
+  background: linear-gradient(90deg, var(--primary), var(--secondary));
+  transition: width 0.6s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+/* ── Form Area ── */
+.add-product-body {
+  padding: 3.5rem;
+  flex-grow: 1;
+  display: flex;
+  flex-direction: column;
+  background: rgba(255, 255, 255, 0.2);
+}
+
+.form-header {
+  margin-bottom: 3rem;
+}
+
+.form-header h4 {
+  font-size: 1.75rem;
+  font-weight: 800;
+  color: var(--text-dark);
+  margin: 0;
+  letter-spacing: -0.5px;
+}
+
+.glass-input, .glass-select {
+  background: white !important;
+  border: 1px solid var(--border-glass) !important;
+  color: var(--text-dark) !important;
+  border-radius: 14px !important;
+  padding: 0.9rem 1.25rem !important;
+  font-weight: 600 !important;
+  transition: all 0.3s !important;
+}
+
+.glass-input:focus, .glass-select:focus {
+  border-color: var(--primary) !important;
+  box-shadow: 0 0 0 4px rgba(99, 102, 241, 0.1) !important;
+  transform: translateY(-1px);
+}
+
+.form-label {
+  font-size: 0.75rem;
+  font-weight: 800;
+  color: var(--text-muted);
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  margin-bottom: 0.75rem;
+  display: block;
+}
+
+.readonly-input {
+  background: var(--bg-main) !important;
+  color: var(--text-muted) !important;
+  font-family: 'Roboto Mono', monospace;
+  font-size: 0.85rem !important;
+}
+
+/* Image Upload UI */
+.crop-image-upload-wrapper {
+  margin-bottom: 1.5rem;
+}
+
+.image-placeholder {
+  height: 220px;
+  background: white;
+  border: 2px dashed var(--border-glass);
+  border-radius: 20px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: all 0.3s;
+  color: var(--text-muted);
+}
+
+.image-placeholder:hover {
+  border-color: var(--primary);
+  background: var(--primary-light);
+  color: var(--primary);
+}
+
+.image-preview-container {
+  position: relative;
+  border-radius: 20px;
+  overflow: hidden;
+  height: 220px;
+  box-shadow: var(--shadow-md);
+  cursor: pointer;
+}
+
+.change-image-overlay {
+  position: absolute;
+  inset: 0;
+  background: rgba(0,0,0,0.4);
+  color: white;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  opacity: 0;
+  transition: opacity 0.3s;
+  font-weight: 700;
+}
+
+.image-preview-container:hover .change-image-overlay {
+  opacity: 1;
+}
+
+/* Buttons */
+.btn-glass-primary {
+  background: linear-gradient(135deg, var(--primary), var(--secondary)) !important;
+  border: none !important;
+  color: white !important;
+  padding: 1rem 2.5rem !important;
+  border-radius: 16px !important;
+  font-weight: 800 !important;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  transition: all 0.3s !important;
+  box-shadow: 0 10px 20px rgba(99, 102, 241, 0.2) !important;
+}
+
+.btn-glass-primary:hover {
+  transform: translateY(-3px) scale(1.02);
+  box-shadow: 0 15px 30px rgba(99, 102, 241, 0.3) !important;
+}
+
+.btn-glass-secondary {
+  background: white !important;
+  border: 1px solid var(--border-glass) !important;
+  color: var(--text-dark) !important;
+  padding: 1rem 2.5rem !important;
+  border-radius: 16px !important;
+  font-weight: 700 !important;
+  transition: all 0.3s !important;
+}
+
+.btn-glass-secondary:hover {
+  background: var(--bg-main) !important;
+  border-color: var(--text-muted) !important;
+}
+
+.blockchain-warning {
+  background: var(--primary-light);
+  border: 1px solid rgba(99, 102, 241, 0.2);
+  color: var(--primary);
+  border-radius: 16px;
+  padding: 1.5rem;
+  font-size: 0.9rem;
+  font-weight: 600;
+  line-height: 1.5;
+  display: flex;
+  align-items: flex-start;
+  gap: 1rem;
+}
+
+.blockchain-warning i {
+  font-size: 1.25rem;
+}
+
+@media (max-width: 992px) {
+  .add-product-card { flex-direction: column; }
+  .add-product-sidebar { 
+    width: 100%; 
+    border-right: none; 
+    border-bottom: 1px solid var(--border-glass); 
+    padding: 2rem;
+  }
+  .add-product-body { padding: 2.5rem; }
+  .step-item { margin-bottom: 1rem; }
+  .step-item:not(:last-child)::after { display: none; }
+  .progress-container { margin-top: 1.5rem; }
+}
+
+@keyframes fade-in {
+  from { opacity: 0; transform: translateY(20px); }
+  to { opacity: 1; transform: translateY(0); }
+}

@@ -1,0 +1,306 @@
+/* ================================================================
+   PROCESSOR DASHBOARD — CSS
+   "Industrial Forge" — Dark glassmorphism theme with Blue-Slate palette
+   ================================================================ */
+
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap');
+
+/* ── Reset & Base ── */
+.proc-dashboard {
+  font-family: 'Inter', sans-serif;
+  min-height: 100vh;
+  background: radial-gradient(circle at 50% 50%, #0f172a 0%, #020617 100%);
+  color: #f1f5f9;
+  overflow-x: hidden;
+}
+
+.proc-dashboard::before {
+  content: '';
+  position: fixed;
+  top: 0; left: 0; width: 100%; height: 100%;
+  background: 
+    radial-gradient(circle at 80% 20%, rgba(59, 130, 246, 0.08) 0%, transparent 40%),
+    radial-gradient(circle at 20% 80%, rgba(14, 165, 233, 0.08) 0%, transparent 40%);
+  pointer-events: none;
+  z-index: 0;
+}
+
+/* ── Top Bar ── */
+.proc-topbar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 1.2rem 2rem;
+  background: rgba(255, 255, 255, 0.02);
+  backdrop-filter: blur(12px);
+  border-bottom: 1px solid rgba(59, 130, 246, 0.2);
+  position: sticky;
+  top: 0;
+  z-index: 100;
+}
+
+.proc-topbar__brand {
+  display: flex;
+  align-items: center;
+  gap: 0.9rem;
+}
+
+.proc-topbar__logo {
+  font-size: 2.2rem;
+  filter: drop-shadow(0 0 12px #3b82f6);
+}
+
+.proc-topbar__title {
+  font-size: 1.4rem;
+  font-weight: 800;
+  background: linear-gradient(90deg, #3b82f6, #0ea5e9);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+  margin: 0;
+}
+
+.proc-topbar__subtitle {
+  font-size: 0.72rem;
+  color: #64748b;
+  margin: 0;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+.proc-topbar__user {
+  display: flex;
+  align-items: center;
+  gap: 0.8rem;
+}
+
+.proc-topbar__avatar {
+  width: 38px;
+  height: 38px;
+  border-radius: 50%;
+  background: linear-gradient(135deg, #3b82f6, #0ea5e9);
+  display: grid;
+  place-items: center;
+  font-weight: 700;
+  font-size: 1rem;
+  color: #fff;
+}
+
+.proc-topbar__name {
+  font-weight: 600;
+  font-size: 0.9rem;
+  margin: 0;
+}
+
+.proc-topbar__role {
+  font-size: 0.72rem;
+  color: #3b82f6;
+  margin: 0;
+  font-weight: 500;
+}
+
+.proc-topbar__logout {
+  background: rgba(239, 68, 68, 0.1);
+  color: #f87171;
+  border: 1px solid rgba(239, 68, 68, 0.3);
+  padding: 0.45rem 1.1rem;
+  border-radius: 8px;
+  cursor: pointer;
+  font-size: 0.82rem;
+  font-weight: 600;
+  transition: all 0.2s;
+}
+
+.proc-topbar__logout:hover {
+  background: rgba(239, 68, 68, 0.2);
+  transform: translateY(-1px);
+}
+
+/* ── Stats Banner ── */
+.proc-stats {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 1rem;
+  padding: 1.5rem 2rem;
+}
+
+@media (max-width: 900px) { .proc-stats { grid-template-columns: repeat(2, 1fr); } }
+@media (max-width: 500px) { .proc-stats { grid-template-columns: 1fr; } }
+
+.proc-stat-card {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  background: rgba(255, 255, 255, 0.03);
+  border: 1px solid rgba(255, 255, 255, 0.06);
+  border-left: 3px solid var(--accent, #3b82f6);
+  border-radius: 12px;
+  padding: 1.2rem;
+  backdrop-filter: blur(8px);
+  transition: all 0.2s;
+}
+
+.proc-stat-card:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 12px 30px rgba(0,0,0,0.5), 0 0 15px rgba(59, 130, 246, 0.1);
+  border-color: rgba(59, 130, 246, 0.3);
+}
+
+.proc-stat-card__icon { 
+    font-size: 2.2rem; 
+    filter: drop-shadow(0 0 8px var(--accent));
+}
+.proc-stat-card__label { font-size: 0.7rem; color: #64748b; margin: 0; font-weight: 600; text-transform: uppercase; letter-spacing: 0.1em; }
+.proc-stat-card__value { font-size: 1.4rem; color: #fff; margin: 0; font-weight: 800; }
+
+/* ── Tab Navigation ── */
+.proc-tabs {
+  display: flex;
+  gap: 0.4rem;
+  padding: 0 2rem;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.06);
+  overflow-x: auto;
+}
+
+.proc-tab {
+  background: transparent;
+  border: none;
+  color: #64748b;
+  padding: 0.9rem 1.4rem;
+  cursor: pointer;
+  font-size: 0.85rem;
+  font-weight: 500;
+  font-family: 'Inter', sans-serif;
+  border-bottom: 2px solid transparent;
+  transition: all 0.2s;
+  white-space: nowrap;
+}
+
+.proc-tab:hover { color: #f1f5f9; }
+
+.proc-tab--active {
+  color: #3b82f6;
+  border-bottom-color: #3b82f6;
+  font-weight: 600;
+}
+
+/* ── Content Wrapper ── */
+.proc-content { padding: 2rem; position: relative; z-index: 1; }
+
+/* ── List/Grid Styles (Reuseable) ── */
+.proc-card {
+  background: rgba(255, 255, 255, 0.03);
+  border: 1px solid rgba(255, 255, 255, 0.05);
+  border-radius: 16px;
+  padding: 1.5rem;
+  backdrop-filter: blur(8px);
+  transition: all 0.2s;
+}
+
+.proc-card:hover {
+  border-color: rgba(59, 130, 246, 0.3);
+  box-shadow: 0 12px 30px rgba(0,0,0,0.4);
+}
+
+/* ── Form Styling Overrides ── */
+.proc-form-card {
+  max-width: 800px;
+  margin: 0 auto;
+}
+
+.proc-btn {
+  background: linear-gradient(90deg, #3b82f6, #0ea5e9);
+  color: #fff;
+  border: none;
+  padding: 0.8rem 1.5rem;
+  border-radius: 10px;
+  font-weight: 700;
+  cursor: pointer;
+  transition: opacity 0.2s;
+}
+
+.proc-btn:hover { opacity: 0.9; }
+.proc-btn--secondary { background: rgba(255, 255, 255, 0.05); color: #94a3b8; }
+
+/* ── Table / List Styling ── */
+.proc-table-container {
+  background: rgba(255, 255, 255, 0.02);
+  border: 1px solid rgba(255, 255, 255, 0.05);
+  border-radius: 16px;
+  overflow: hidden;
+  backdrop-filter: blur(10px);
+}
+
+.proc-table {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+.proc-table th {
+  text-align: left;
+  padding: 1.2rem;
+  background: rgba(255, 255, 255, 0.03);
+  color: #64748b;
+  font-size: 0.72rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+}
+
+.proc-table td {
+  padding: 1.2rem;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.03);
+  vertical-align: middle;
+}
+
+.proc-table tr:hover {
+  background: rgba(59, 130, 246, 0.03);
+}
+
+.proc-batch-tag {
+  font-family: monospace;
+  color: #3b82f6;
+  background: rgba(59, 130, 246, 0.1);
+  padding: 0.2rem 0.6rem;
+  border-radius: 4px;
+  font-size: 0.8rem;
+}
+
+.proc-product-name {
+  font-weight: 700;
+  color: #fff;
+  margin-bottom: 0.2rem;
+}
+
+.proc-subtext {
+  font-size: 0.75rem;
+  color: #64748b;
+}
+
+/* ── Form Overrides ── */
+.form-control, .form-select {
+  background: rgba(255, 255, 255, 0.05) !important;
+  border: 1px solid rgba(255, 255, 255, 0.1) !important;
+  color: #fff !important;
+  border-radius: 10px !important;
+}
+
+.form-control:focus, .form-select:focus {
+  background: rgba(255, 255, 255, 0.08) !important;
+  border-color: #3b82f6 !important;
+  box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.2) !important;
+}
+
+.form-label {
+  color: #64748b !important;
+  font-weight: 600 !important;
+  font-size: 0.8rem !important;
+  text-transform: uppercase !important;
+  letter-spacing: 0.05em !important;
+}
+
+.card {
+  background: transparent !important;
+  border: none !important;
+}

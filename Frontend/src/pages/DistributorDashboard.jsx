@@ -1,4 +1,5 @@
 import React, { useState, useEffect, useContext } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { AuthContext } from '../context/AuthContext';
 import Navbar from '../components/Navbar';
 import KPICard from '../components/Dashboard/KPICard';
@@ -21,6 +22,7 @@ const DistributorDashboard = () => {
     const [activeTab, setActiveTab] = useState('available');
     const [selectedShipment, setSelectedShipment] = useState(null);
     const [shipmentLogs, setShipmentLogs] = useState([]);
+    const navigate = useNavigate();
 
     useEffect(() => {
         const fetchShipmentLogs = async () => {
@@ -107,10 +109,31 @@ const DistributorDashboard = () => {
 
                 {/* ── Metrics Grid ── */}
                 <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 mb-8">
-                    <KPICard title="Active Shipments" value={summary.inTransit || 0} icon="🚛" color="#0ea5e9" trend={+2} />
-                    <KPICard title="Queue" value={summary.packaged || 0} icon="📦" color="#10b981" trend={-5} />
+                    <KPICard 
+                        title="Active Shipments" 
+                        value={summary.inTransit || 0} 
+                        icon="🚛" 
+                        color="#0ea5e9" 
+                        trend={+2} 
+                        onClick={() => navigate('/dist-active-shipments')}
+                    />
+                    <KPICard 
+                        title="Queue" 
+                        value={summary.packaged || 0} 
+                        icon="📦" 
+                        color="#10b981" 
+                        trend={-5} 
+                        onClick={() => navigate('/dist-queue')}
+                    />
                     <KPICard title="Delivery Rate" value="98%" icon="✅" color="#f59e0b" trend={+1} />
-                    <KPICard title="Active Alerts" value={summary.rejected || 0} icon="⚠️" color="#ef4444" trend={0} />
+                    <KPICard 
+                        title="Active Alerts" 
+                        value={summary.rejected || 0} 
+                        icon="⚠️" 
+                        color="#ef4444" 
+                        trend={0} 
+                        onClick={() => navigate('/dist-alerts')}
+                    />
                 </div>
 
                 {/* ── Tabs Navigation ── */}

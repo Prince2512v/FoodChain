@@ -57,6 +57,13 @@ namespace FoodSupplyChainAPI.Data
                 .HasForeignKey(s => s.DistributorId)
                 .OnDelete(DeleteBehavior.Restrict);
 
+            // Product → Distributor (restrict delete)
+            modelBuilder.Entity<Product>()
+                .HasOne(p => p.Distributor)
+                .WithMany()
+                .HasForeignKey(p => p.DistributorId)
+                .OnDelete(DeleteBehavior.Restrict);
+
             // Retailer Receipt Relationships
             modelBuilder.Entity<RetailerReceipt>()
                 .HasOne(r => r.Product)

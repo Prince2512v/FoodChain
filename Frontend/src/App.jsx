@@ -17,6 +17,10 @@ import AdminDashboard from './pages/AdminDashboard';
 import ProcessorDashboard from './pages/ProcessorDashboard';
 import DistributorDashboard from './pages/DistributorDashboard';
 import RetailerDashboard from './pages/RetailerDashboard';
+import YieldDetails from './pages/YieldDetails';
+import MetricDetails from './pages/MetricDetails';
+import QueueDetails from './pages/QueueDetails';
+import AuditLogs from './pages/AuditLogs';
 
 const App = () => {
     return (
@@ -31,8 +35,56 @@ const App = () => {
                     <Route path="/dashboard" element={
                         <ProtectedRoute><Dashboard /></ProtectedRoute>
                     } />
+                    <Route path="/audit-logs" element={
+                        <ProtectedRoute><AuditLogs /></ProtectedRoute>
+                    } />
                     <Route path="/farmer-dashboard" element={
                         <ProtectedRoute allowedRoles={['Farmer']}><FarmerDashboard /></ProtectedRoute>
+                    } />
+                    <Route path="/yield-details" element={
+                        <ProtectedRoute allowedRoles={['Farmer']}><YieldDetails /></ProtectedRoute>
+                    } />
+                     <Route path="/metric-details/:type" element={
+                        <ProtectedRoute allowedRoles={['Farmer']}><MetricDetails /></ProtectedRoute>
+                    } />
+                    <Route path="/processing-details" element={
+                        <ProtectedRoute allowedRoles={['Farmer']}><MetricDetails type="processing" /></ProtectedRoute>
+                    } />
+                    <Route path="/delivered-details" element={
+                        <ProtectedRoute allowedRoles={['Farmer']}><MetricDetails type="delivered" /></ProtectedRoute>
+                    } />
+                    <Route path="/quality-alerts" element={
+                        <ProtectedRoute allowedRoles={['Farmer']}><MetricDetails type="alerts" /></ProtectedRoute>
+                    } />
+                    <Route path="/queue-details" element={
+                        <ProtectedRoute allowedRoles={['Processor']}><QueueDetails /></ProtectedRoute>
+                    } />
+                    <Route path="/proc-processing-details" element={
+                        <ProtectedRoute allowedRoles={['Processor']}><MetricDetails type="processing" /></ProtectedRoute>
+                    } />
+                    <Route path="/packaged-details" element={
+                        <ProtectedRoute allowedRoles={['Processor']}><MetricDetails type="packaged" /></ProtectedRoute>
+                    } />
+                    <Route path="/proc-quality-alerts" element={
+                        <ProtectedRoute allowedRoles={['Processor']}><MetricDetails type="alerts" /></ProtectedRoute>
+                    } />
+                    <Route path="/dist-active-shipments" element={
+                        <ProtectedRoute allowedRoles={['Distributor']}><MetricDetails type="processing" /></ProtectedRoute>
+                    } />
+                    <Route path="/dist-queue" element={
+                        <ProtectedRoute allowedRoles={['Distributor']}><MetricDetails type="packaged" /></ProtectedRoute>
+                    } />
+                    <Route path="/dist-alerts" element={
+                        <ProtectedRoute allowedRoles={['Distributor']}><MetricDetails type="alerts" /></ProtectedRoute>
+                    } />
+                    <Route path="/ret-stock" element={
+                        <ProtectedRoute allowedRoles={['Retailer']}><MetricDetails type="delivered" /></ProtectedRoute>
+                    } />
+                    <Route path="/ret-pending" element={
+                        <ProtectedRoute allowedRoles={['Retailer']}><MetricDetails type="processing" /></ProtectedRoute>
+                    } />
+                    <Route path="/ret-alerts" element={
+                        <ProtectedRoute allowedRoles={['Retailer']}><MetricDetails type="alerts" /></ProtectedRoute>
                     } />
                     <Route path="/admin-dashboard" element={
                         <ProtectedRoute allowedRoles={['Admin']}><AdminDashboard /></ProtectedRoute>

@@ -48,9 +48,9 @@ namespace FoodSupplyChainAPI.Controllers
                 InTransit = role == "Distributor" 
                     ? await shipmentsQuery.CountAsync(s => s.Status == "In Transit")
                     : await productsQuery.CountAsync(p => p.Status == "In Transit"),
-                Delivered = await productsQuery.CountAsync(p => p.Status == "Delivered"),
+                Delivered = await productsQuery.CountAsync(p => p.Status == "Completed" || p.Status == "Delivered"),
                 Available = await productsQuery.CountAsync(p => p.Status == "Available"),
-                Rejected = await productsQuery.CountAsync(p => p.IsRejected)
+                Rejected = await productsQuery.CountAsync(p => p.IsRejected || p.Status == "Rejected")
             };
 
             return Ok(totalStats);
@@ -82,14 +82,18 @@ namespace FoodSupplyChainAPI.Controllers
         }
 
         [HttpGet("recent-activities")]
-        public async Task<IActionResult> GetRecentActivities()
+        public async Task<IActionResult> GetRecentActivities([FromQuery] int limit = 10)
         {
             var role = User.FindFirst(ClaimTypes.Role)?.Value;
-            var activities = await _context.BlockchainTransactions
-                .Where(t => role == "Admin" || t.Role == role)
-                .OrderByDescending(t => t.Timestamp)
-                .Take(10)
-                .ToListAsync();
+            if (string.IsNullOrEmpty(role)) return Unauthorized("Role claim missing");
+
+            var query = _context.BlockchainTransactions
+                .Where(t => role == "Admin" || t.Role.ToLower() == role.ToLower())
+                .OrderByDescending(t => t.Timestamp);
+
+            var activities = limit > 0 
+                ? await query.Take(limit).ToListAsync() 
+                : await query.ToListAsync();
 
             return Ok(activities);
         }

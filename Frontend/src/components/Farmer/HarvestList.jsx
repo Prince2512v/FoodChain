@@ -1,6 +1,6 @@
 import React from 'react';
 
-const HarvestList = ({ products, onShowQR, onNavigateDetails, loading }) => {
+const HarvestList = ({ products, onShowQR, onNavigateDetails, onInitialize, loading }) => {
   if (loading) {
     return (
         <div className="flex flex-col items-center justify-center py-12">
@@ -15,7 +15,10 @@ const HarvestList = ({ products, onShowQR, onNavigateDetails, loading }) => {
       <div className="text-center py-12 bg-white/50 backdrop-blur-sm rounded-3xl border border-slate-200">
         <i className="bi bi-wind text-5xl block mb-4 text-slate-200"></i>
         <p className="font-bold text-slate-500 mb-4">No harvests recorded in this sector.</p>
-        <button className="px-5 py-2 border border-emerald-500 text-emerald-600 hover:bg-emerald-50 rounded-full text-sm font-bold transition-colors">
+        <button 
+          className="px-5 py-2 border border-emerald-500 text-emerald-600 hover:bg-emerald-50 rounded-full text-sm font-bold transition-colors"
+          onClick={onInitialize}
+        >
             Initialize Sector
         </button>
       </div>

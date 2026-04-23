@@ -131,6 +131,20 @@ namespace FoodSupplyChainAPI.Controllers
             return Ok(inventory);
         }
 
+        [HttpGet("products")]
+        public async Task<IActionResult> GetRetailerProducts()
+        {
+            var userId = GetUserId();
+            var products = await _context.Products
+                .Include(p => p.Farmer)
+                .Include(p => p.Processor)
+                .Where(p => p.RetailerId == userId || (p.Status == "Delivered" && p.RetailerId == null))
+                .OrderByDescending(p => p.Timestamp)
+                .ToListAsync();
+
+            return Ok(products);
+        }
+
         // 4. PUT /api/retailer/inventory/{id}
         [HttpPut("inventory/{id}")]
         public async Task<IActionResult> UpdateInventory(int id, [FromBody] UpdateInventoryDto dto)

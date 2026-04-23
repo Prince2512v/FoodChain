@@ -88,10 +88,38 @@ const FarmerDashboard = () => {
 
                 {/* ── Metrics Grid ── */}
                 <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 mb-8">
-                    <KPICard title="Total Yield" value={summary.total || 0} icon="🌾" color="#10b981" trend={+4} />
-                    <KPICard title="In Processing" value={summary.processing || 0} icon="🏭" color="#3b82f6" trend={+1} />
-                    <KPICard title="Delivered" value={summary.delivered || 0} icon="🚚" color="#8b5cf6" trend={+12} />
-                    <KPICard title="Quality Alerts" value={summary.rejected || 0} icon="⚠️" color="#ef4444" trend={0} />
+                    <KPICard 
+                        title="Total Yield" 
+                        value={summary.total || 0} 
+                        icon="🌾" 
+                        color="#10b981" 
+                        trend={+4} 
+                        onClick={() => navigate('/yield-details')}
+                    />
+                    <KPICard 
+                        title="In Processing" 
+                        value={summary.processing || 0} 
+                        icon="🏭" 
+                        color="#3b82f6" 
+                        trend={+1} 
+                        onClick={() => navigate('/processing-details')}
+                    />
+                    <KPICard 
+                        title="Delivered" 
+                        value={summary.delivered || 0} 
+                        icon="🚚" 
+                        color="#8b5cf6" 
+                        trend={+12} 
+                        onClick={() => navigate('/delivered-details')}
+                    />
+                    <KPICard 
+                        title="Quality Alerts" 
+                        value={summary.rejected || 0} 
+                        icon="⚠️" 
+                        color="#ef4444" 
+                        trend={0} 
+                        onClick={() => navigate('/quality-alerts')}
+                    />
                 </div>
 
                 {/* Charts & Activity Feed */}
@@ -124,6 +152,7 @@ const FarmerDashboard = () => {
                                 const product = products.find(p => p.id === id);
                                 if (product) navigate(`/track/${product.batchId}`);
                             }}
+                            onInitialize={() => navigate('/add-product')}
                         />
                     </div>
                 </div>

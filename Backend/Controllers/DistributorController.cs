@@ -56,6 +56,20 @@ namespace FoodSupplyChainAPI.Controllers
             return Ok(products);
         }
 
+        [HttpGet("products")]
+        public async Task<IActionResult> GetDistributorProducts()
+        {
+            var userId = GetUserId();
+            var products = await _context.Products
+                .Include(p => p.Farmer)
+                .Include(p => p.Processor)
+                .Where(p => p.Status == "Packaged" || p.DistributorId == userId)
+                .OrderByDescending(p => p.Timestamp)
+                .ToListAsync();
+
+            return Ok(products);
+        }
+
         // ─────────────────────────────────────────────────────────────
         // 2. POST /api/distributor/accept/{productId}
         //    Distributor accepts a packaged product → creates Shipment

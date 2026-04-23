@@ -1,7 +1,10 @@
 import React from 'react';
 
-const KPICard = ({ title, value, icon, color, trend }) => (
-    <div className="bg-white rounded-3xl p-6 border border-slate-200 shadow-sm relative overflow-hidden transition-all hover:shadow-md h-full w-full flex flex-col">
+const KPICard = ({ title, value, icon, color, trend, onClick }) => (
+    <div 
+        className={`bg-white rounded-3xl p-6 border border-slate-200 shadow-sm relative overflow-hidden transition-all hover:shadow-md h-full w-full flex flex-col ${onClick ? 'cursor-pointer hover:scale-[1.02] active:scale-[0.98]' : ''}`}
+        onClick={onClick}
+    >
         {/* Soft glow background strictly tied to the color prop */}
         <div style={{
             position: 'absolute', 

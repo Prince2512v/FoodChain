@@ -20,8 +20,9 @@ const IncomingProducts = ({ products, onSelect }) => {
                         <tr>
                             <th style={{ width: '15%' }}>Batch ID</th>
                             <th style={{ width: '25%' }}>Product Entity</th>
-                            <th style={{ width: '25%' }}>Source Node</th>
-                            <th style={{ width: '20%' }}>Cargo Volume</th>
+                            <th style={{ width: '15%' }}>Source Node</th>
+                            <th style={{ width: '15%' }}>Status</th>
+                            <th style={{ width: '15%' }}>Cargo Volume</th>
                             <th style={{ width: '15%', textAlign: 'right' }}>Action</th>
                         </tr>
                     </thead>
@@ -52,9 +53,18 @@ const IncomingProducts = ({ products, onSelect }) => {
                                     </div>
                                 </td>
                                 <td>
+                                    <Badge bg={
+                                        product.status === 'Created' ? 'info' : 
+                                        product.status === 'Processing' ? 'warning' : 
+                                        product.status === 'Packaged' ? 'success' : 'secondary'
+                                    } className="rounded-pill px-3 py-2 fw-bold text-uppercase" style={{ fontSize: '0.65rem' }}>
+                                        {product.status}
+                                    </Badge>
+                                </td>
+                                <td>
                                     <div className="fw-bold text-dark">{product.quantity} <span className="text-muted small">{product.unit}</span></div>
                                     <div className="text-muted small">
-                                        Harvested: {new Date(product.harvestDate).toLocaleDateString()}
+                                        Harvested: {product.harvestDate ? new Date(product.harvestDate).toLocaleDateString() : 'Pending'}
                                     </div>
                                 </td>
                                 <td style={{ textAlign: 'right' }}>
@@ -63,7 +73,7 @@ const IncomingProducts = ({ products, onSelect }) => {
                                             className="btn btn-primary btn-sm rounded-pill px-3 fw-bold shadow-sm"
                                             onClick={() => onSelect(product, 'process')}
                                         >
-                                            Process Batch <i className="bi bi-arrow-right-short ms-1"></i>
+                                            Start Process <i className="bi bi-play-fill ms-1"></i>
                                         </button>
                                     )}
                                     {product.status === 'Processing' && product.qualityStatus !== 'Passed' && (
@@ -81,6 +91,11 @@ const IncomingProducts = ({ products, onSelect }) => {
                                         >
                                             Package <i className="bi bi-box-seam ms-1"></i>
                                         </button>
+                                    )}
+                                    {product.status === 'Packaged' && (
+                                        <span className="text-success small fw-bold">
+                                            <i className="bi bi-check-circle-fill me-1"></i> Ready for Pickup
+                                        </span>
                                     )}
                                 </td>
                             </tr>

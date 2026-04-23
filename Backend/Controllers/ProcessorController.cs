@@ -49,6 +49,19 @@ namespace FoodSupplyChainAPI.Controllers
 
             return Ok(products);
         }
+
+        [HttpGet("products")]
+        public async Task<IActionResult> GetProcessorProducts()
+        {
+            var userId = GetUserId();
+            var products = await _context.Products
+                .Include(p => p.Farmer)
+                .Where(p => p.ProcessorId == userId || (p.ProcessorId == null && p.Status == "Created"))
+                .OrderByDescending(p => p.Timestamp)
+                .ToListAsync();
+
+            return Ok(products);
+        }
         public async Task<IActionResult> TestIncomingProducts()
         {
             try {

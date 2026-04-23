@@ -1,7 +1,10 @@
 import React from 'react';
 import { Card, Badge, Table } from 'react-bootstrap';
+import { useNavigate } from 'react-router-dom';
 
-const ActivityFeed = ({ activities }) => (
+const ActivityFeed = ({ activities }) => {
+    const navigate = useNavigate();
+    return (
     <div className="glass-panel p-4 h-100 animate-fade-in overflow-hidden d-flex flex-column">
         <h4 className="fw-bold mb-4 text-dark d-flex align-items-center">
             <i className="bi bi-clock-history me-2 text-primary"></i>
@@ -45,12 +48,16 @@ const ActivityFeed = ({ activities }) => (
             )}
         </div>
         <div className="mt-3 pt-3 border-top border-light text-center">
-            <button className="btn btn-link btn-sm text-primary text-decoration-none fw-bold">
+            <button 
+                className="btn btn-link btn-sm text-primary text-decoration-none fw-bold hover:scale-105 transition-transform"
+                onClick={() => navigate('/audit-logs')}
+            >
                 View All Logs <i className="bi bi-arrow-right ms-1"></i>
             </button>
         </div>
     </div>
-);
+    );
+};
 
 const getRoleColor = (role) => {
     switch (role) {

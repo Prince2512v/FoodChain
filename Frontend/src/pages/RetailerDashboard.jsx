@@ -1,4 +1,5 @@
 import React, { useState, useEffect, useContext, useCallback } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { AuthContext } from '../context/AuthContext';
 import Navbar from '../components/Navbar';
 import KPICard from '../components/Dashboard/KPICard';
@@ -21,6 +22,7 @@ const RetailerDashboard = () => {
     const [activeTab, setActiveTab] = useState('inventory');
     const [verifyingShipment, setVerifyingShipment] = useState(null);
     const [showManualModal, setShowManualModal] = useState(false);
+    const navigate = useNavigate();
 
     const handleManualEntry = (newProduct) => {
         setInventory(prev => [newProduct, ...prev]);
@@ -112,10 +114,31 @@ const RetailerDashboard = () => {
 
                 {/* ── Metrics Grid ── */}
                 <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 mb-8">
-                    <KPICard title="Current Stock" value={inventory.length || 0} icon="📦" color="#f59e0b" trend={+3} />
-                    <KPICard title="Pending Arrival" value={shipments.length || 0} icon="🚚" color="#3b82f6" trend={+2} />
+                    <KPICard 
+                        title="Current Stock" 
+                        value={inventory.length || 0} 
+                        icon="📦" 
+                        color="#f59e0b" 
+                        trend={+3} 
+                        onClick={() => navigate('/ret-stock')}
+                    />
+                    <KPICard 
+                        title="Pending Arrival" 
+                        value={shipments.length || 0} 
+                        icon="🚚" 
+                        color="#3b82f6" 
+                        trend={+2} 
+                        onClick={() => navigate('/ret-pending')}
+                    />
                     <KPICard title="Sold Items" value="1,240" icon="✅" color="#10b981" trend={+15} />
-                    <KPICard title="Active Alerts" value={summary.rejected || 0} icon="⚠️" color="#ef4444" trend={0} />
+                    <KPICard 
+                        title="Active Alerts" 
+                        value={summary.rejected || 0} 
+                        icon="⚠️" 
+                        color="#ef4444" 
+                        trend={0} 
+                        onClick={() => navigate('/ret-alerts')}
+                    />
                 </div>
 
                 {/* Charts & Activity Feed */}

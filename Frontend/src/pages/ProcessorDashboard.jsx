@@ -1,4 +1,5 @@
 import React, { useEffect, useState, useContext, useCallback } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { AuthContext } from '../context/AuthContext';
 import Navbar from '../components/Navbar';
 import KPICard from '../components/Dashboard/KPICard';
@@ -19,6 +20,7 @@ const ProcessorDashboard = () => {
     const [loading, setLoading] = useState(true);
     const [selectedProduct, setSelectedProduct] = useState(null);
     const [viewMode, setViewMode] = useState('list'); // 'list', 'process', 'quality', 'package'
+    const navigate = useNavigate();
 
     const fetchDashboardData = useCallback(async () => {
         setLoading(true);
@@ -98,10 +100,38 @@ const ProcessorDashboard = () => {
 
                 {/* ── Metrics Grid (Tailwind) ── */}
                 <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 mb-8">
-                    <KPICard title="Queue Size" value={incomingProducts.length} icon="📥" color="#f97316" trend={+2} />
-                    <KPICard title="In Process" value={summary.processing || 0} icon="⚙️" color="#3b82f6" trend={+5} />
-                    <KPICard title="Packaged" value={summary.packaged || 0} icon="📦" color="#10b981" trend={+9} />
-                    <KPICard title="Quality Alerts" value={summary.rejected || 0} icon="⚠️" color="#ef4444" trend={-1} />
+                    <KPICard 
+                        title="Queue Size" 
+                        value={incomingProducts.length} 
+                        icon="📥" 
+                        color="#f97316" 
+                        trend={+2} 
+                        onClick={() => navigate('/queue-details')}
+                    />
+                    <KPICard 
+                        title="In Process" 
+                        value={summary.processing || 0} 
+                        icon="⚙️" 
+                        color="#3b82f6" 
+                        trend={+5} 
+                        onClick={() => navigate('/proc-processing-details')}
+                    />
+                    <KPICard 
+                        title="Packaged" 
+                        value={summary.packaged || 0} 
+                        icon="📦" 
+                        color="#10b981" 
+                        trend={+9} 
+                        onClick={() => navigate('/packaged-details')}
+                    />
+                    <KPICard 
+                        title="Quality Alerts" 
+                        value={summary.rejected || 0} 
+                        icon="⚠️" 
+                        color="#ef4444" 
+                        trend={-1} 
+                        onClick={() => navigate('/proc-quality-alerts')}
+                    />
                 </div>
 
                 {/* Charts & Activity Feed */}

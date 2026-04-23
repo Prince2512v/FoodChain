@@ -56,6 +56,10 @@ namespace FoodSupplyChainAPI.Models
         public User? Processor { get; set; }
 
         public string ProcessingTxHash { get; set; } = string.Empty;
+        
+        // Distributor Details
+        public int? DistributorId { get; set; }
+        public User? Distributor { get; set; }
 
         // Retailer Details
         public int? RetailerId { get; set; }

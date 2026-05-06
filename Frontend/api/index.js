@@ -22,4 +22,12 @@ app.use((err, req, res, next) => {
   res.status(500).json({ message: 'Something went wrong!' });
 });
 
+// For local development only (Vercel uses the export)
+if (process.env.NODE_ENV !== 'production' && (process.argv[1].includes('api/index.js') || process.argv[1].includes('api\\index.js'))) {
+  const PORT = process.env.PORT || 3001;
+  app.listen(PORT, () => {
+    console.log(`Local API server running on http://localhost:${PORT}`);
+  });
+}
+
 export default app;

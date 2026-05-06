@@ -98,6 +98,21 @@ namespace FoodSupplyChainAPI.Controllers
             var completed = await _context.Products.CountAsync(p => p.Status == "Completed");
             var rejected = await _context.Products.CountAsync(p => p.IsRejected);
 
+            // Calculate a comprehensive transaction volume
+            var blockchainTxCount = await _context.BlockchainTransactions.CountAsync();
+            var productTxCount = await _context.Products.CountAsync(p => 
+                !string.IsNullOrEmpty(p.BlockchainTxHash) || 
+                !string.IsNullOrEmpty(p.ProcessingTxHash) ||
+                !string.IsNullOrEmpty(p.RetailTxHash));
+            
+            // Note: Some products have multiple hashes (Harvest + Process). 
+            // For a "Volume" metric, we should ideally count each hash as a transaction.
+            var harvestCount = await _context.Products.CountAsync(p => !string.IsNullOrEmpty(p.BlockchainTxHash));
+            var processCount = await _context.Products.CountAsync(p => !string.IsNullOrEmpty(p.ProcessingTxHash));
+            var retailCount = await _context.Products.CountAsync(p => !string.IsNullOrEmpty(p.RetailTxHash));
+            
+            var totalTransactions = blockchainTxCount + harvestCount + processCount + retailCount;
+
             // Fetch recent activities for the chart
             var last7Days = Enumerable.Range(0, 7)
                 .Select(i => DateTime.UtcNow.Date.AddDays(-i))
@@ -114,7 +129,14 @@ namespace FoodSupplyChainAPI.Controllers
 
             return Ok(new
             {
-                Summary = new { totalProducts, totalUsers, activeShipments, completed, rejected },
+                Summary = new { 
+                    totalProducts, 
+                    totalUsers, 
+                    activeShipments, 
+                    completed, 
+                    rejected,
+                    totalTransactions
+                },
                 ChartData = chartData
             });
         }

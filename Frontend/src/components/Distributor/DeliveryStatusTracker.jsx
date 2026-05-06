@@ -56,22 +56,33 @@ const DeliveryStatusTracker = ({ shipment }) => {
 
       if (!res.ok) {
         setAlert({ type: 'error', msg: data.message || 'Failed to update status.' });
+        return false; // Return failure for simulation chaining
       } else {
         setCurrentStatus(newStatus);
         setAlert({ type: 'success', msg: `✅ Status updated to: ${newStatus}` });
+        
+        // AUTO-TRIGGER BLOCKCHAIN RECORDING
+        // Small delay to ensure DB is settled and UI reflects change
+        setTimeout(() => {
+          recordOnBlockchain(newStatus);
+        }, 500);
+        return true; // Return success for simulation chaining
       }
     } catch {
       setAlert({ type: 'error', msg: 'Network error.' });
+      return false;
     } finally {
       setLoading(false);
     }
   };
 
   // ── Record on Blockchain ────────────────────────────────
-  const recordOnBlockchain = async () => {
+  const recordOnBlockchain = async (statusOverride = null) => {
+    const statusToRecord = statusOverride || currentStatus;
+
     if (!shipment?.batchId) {
       setAlert({ type: 'warning', msg: 'No batch ID available. Ensure shipment is selected.' });
-      return;
+      return false;
     }
 
     setBcLoading(true);
@@ -92,13 +103,13 @@ const DeliveryStatusTracker = ({ shipment }) => {
 
       const logisticsData = JSON.stringify({
         shipmentId: shipment.id,
-        status:     currentStatus,
+        status:     statusToRecord,
         timestamp:  Date.now(),
       });
       const locationHash = ethers.id(logisticsData);
       const timestamp    = Math.floor(Date.now() / 1000);
 
-      const tx   = await contract.updateShipment(shipment.batchId, locationHash, currentStatus, timestamp);
+      const tx   = await contract.updateShipment(shipment.batchId, locationHash, statusToRecord, timestamp);
       let hash = tx.hash;
       try {
         const receipt = await tx.wait();
@@ -118,7 +129,7 @@ const DeliveryStatusTracker = ({ shipment }) => {
         body: JSON.stringify({
           batchId: shipment.batchId,
           txHash:  hash,
-          status:  currentStatus,
+          status:  statusToRecord,
         }),
       });
 
@@ -126,8 +137,10 @@ const DeliveryStatusTracker = ({ shipment }) => {
 
       if (!res.ok) {
         setAlert({ type: 'warning', msg: `TX sent (${hash.slice(0,16)}…) but DB save failed: ${data.message}` });
+        return false;
       } else {
-        setAlert({ type: 'success', msg: `⛓ Blockchain recorded! TX: ${hash.slice(0, 20)}…` });
+        setAlert({ type: 'success', msg: `⛓ Blockchain recorded! Status: ${statusToRecord}` });
+        return true;
       }
 
     } catch (err) {
@@ -137,14 +150,45 @@ const DeliveryStatusTracker = ({ shipment }) => {
           errorMsg = "Request already pending in MetaMask. Please check your extension window.";
       }
       setAlert({ type: 'error', msg: `Blockchain error: ${errorMsg.slice(0, 80)}` });
+      return false;
     } finally {
       setBcLoading(false);
     }
   };
 
+  // ── Auto Simulation ──────────────────────────────────────
+  const handleAutoSimulation = async () => {
+    const isSimMode = localStorage.getItem('SIMULATION_MODE') === 'true';
+    if (!isSimMode) {
+      setAlert({ type: 'warning', msg: 'Enable SIMULATOR mode in Navbar to use Auto-Pilot.' });
+      return;
+    }
+
+    const remainingSteps = STATUS_FLOW.slice(currentIdx + 1);
+    if (remainingSteps.length === 0) {
+      setAlert({ type: 'info', msg: 'Shipment is already delivered!' });
+      return;
+    }
+
+    setLoading(true);
+    setAlert({ type: 'info', msg: '🚀 Starting Auto-Pilot Journey...' });
+
+    for (const step of remainingSteps) {
+      const success = await handleStatusUpdate(step.key);
+      if (!success) break;
+      
+      // Wait for the simulated journey "travel time"
+      setAlert({ type: 'info', msg: `🚛 Shipment moving to: ${step.label}...` });
+      await new Promise(resolve => setTimeout(resolve, 2500));
+    }
+    
+    setLoading(false);
+  };
+
   const currentIdx = STATUS_FLOW.findIndex(s => s.key === currentStatus);
   const isIssue    = ISSUE_STATUSES.includes(currentStatus);
   const trackUrl   = shipment?.batchId ? `${window.location.origin}/track?id=${shipment.batchId}` : '';
+  const isSimMode  = localStorage.getItem('SIMULATION_MODE') === 'true';
 
   return (
     <div className="w-full">
@@ -152,15 +196,26 @@ const DeliveryStatusTracker = ({ shipment }) => {
         <h2 className="text-xl font-bold text-slate-800 m-0 flex items-center gap-2">
             <i className="bi bi-clock-history text-sky-500"></i> Delivery Status
         </h2>
-        {shipment && (
-          <button 
-            className="px-3 py-1 bg-white border border-slate-200 shadow-sm rounded-lg text-xs font-bold text-slate-600 hover:bg-slate-50 transition-colors" 
-            onClick={() => setShowQR(true)} 
-            title="Share Tracking QR"
-          >
-            <i className="bi bi-qr-code mr-1"></i> QR Share
-          </button>
-        )}
+        <div className="flex gap-2">
+            {isSimMode && shipment && currentStatus !== 'Delivered' && (
+                <button 
+                  className="px-3 py-1 bg-sky-50 border border-sky-200 shadow-sm rounded-lg text-xs font-bold text-sky-600 hover:bg-sky-100 transition-colors animate-pulse" 
+                  onClick={handleAutoSimulation} 
+                  disabled={loading}
+                >
+                  <i className="bi bi-cpu mr-1"></i> Auto-Pilot
+                </button>
+            )}
+            {shipment && (
+              <button 
+                className="px-3 py-1 bg-white border border-slate-200 shadow-sm rounded-lg text-xs font-bold text-slate-600 hover:bg-slate-50 transition-colors" 
+                onClick={() => setShowQR(true)} 
+                title="Share Tracking QR"
+              >
+                <i className="bi bi-qr-code mr-1"></i> QR Share
+              </button>
+            )}
+        </div>
       </div>
 
       {!shipment && (
@@ -173,12 +228,18 @@ const DeliveryStatusTracker = ({ shipment }) => {
       )}
 
       {alert && (
-        <div className={`mb-6 p-4 rounded-2xl border flex items-center gap-3 ${
+        <div className={`mb-6 p-4 rounded-2xl border flex items-center gap-3 animate-fade-in ${
           alert.type === 'error' ? 'bg-red-50 border-red-200 text-red-800' : 
           alert.type === 'warning' ? 'bg-amber-50 border-amber-200 text-amber-800' :
+          alert.type === 'info' ? 'bg-sky-50 border-sky-200 text-sky-800' :
           'bg-emerald-50 border-emerald-200 text-emerald-800'
         }`}>
-          <i className={`bi ${alert.type === 'error' ? 'bi-x-circle-fill' : alert.type === 'warning' ? 'bi-exclamation-triangle-fill' : 'bi-check-circle-fill'}`}></i>
+          <i className={`bi ${
+            alert.type === 'error' ? 'bi-x-circle-fill' : 
+            alert.type === 'warning' ? 'bi-exclamation-triangle-fill' : 
+            alert.type === 'info' ? 'bi-info-circle-fill' :
+            'bi-check-circle-fill'
+          }`}></i>
           <p className="text-sm font-semibold m-0">{alert.msg}</p>
         </div>
       )}
@@ -192,19 +253,19 @@ const DeliveryStatusTracker = ({ shipment }) => {
           return (
             <div key={step.key} className="flex items-center gap-4 relative mb-6 last:mb-2">
               <div
-                className={`w-10 h-10 rounded-full border-2 flex items-center justify-center text-lg flex-shrink-0 z-10 transition-colors ${
+                className={`w-10 h-10 rounded-full border-2 flex items-center justify-center text-lg flex-shrink-0 z-10 transition-all duration-500 ${
                     done ? 'bg-emerald-50 border-emerald-500 text-emerald-500' : 
-                    active ? `bg-white shadow-md border-sky-500 text-sky-500` : 
+                    active ? `bg-white shadow-md border-sky-500 text-sky-500 scale-110` : 
                     'bg-white border-slate-200 text-slate-300'
                 }`}
               >
                 {done ? <i className="bi bi-check-lg"></i> : step.icon}
               </div>
-              <span className={`text-sm font-bold ${active ? 'text-slate-900' : 'text-slate-500'}`}>
+              <span className={`text-sm font-bold transition-colors duration-500 ${active ? 'text-slate-900' : 'text-slate-500'}`}>
                 {step.label}
               </span>
               {idx < STATUS_FLOW.length - 1 && (
-                <div className={`absolute left-5 top-10 w-[2px] h-6 -z-0 ${idx < currentIdx && !isIssue ? 'bg-emerald-500' : 'bg-slate-100'}`} />
+                <div className={`absolute left-5 top-10 w-[2px] h-6 -z-0 transition-all duration-700 ${idx < currentIdx && !isIssue ? 'bg-emerald-500' : 'bg-slate-100'}`} />
               )}
             </div>
           );
@@ -273,10 +334,10 @@ const DeliveryStatusTracker = ({ shipment }) => {
             </div>
             <button 
               className="w-full py-3 px-4 rounded-xl text-sm font-bold text-white bg-slate-800 hover:bg-slate-900 transition-colors shadow-sm focus:outline-none focus:ring-2 focus:ring-slate-500 disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2"
-              onClick={recordOnBlockchain} 
+              onClick={() => recordOnBlockchain()} 
               disabled={bcLoading || !shipment}
             >
-              {bcLoading ? <><span className="spinner-border spinner-border-sm"></span>Signing...</> : <><i className="bi bi-safe2"></i> Record on Blockchain</>}
+              {bcLoading ? <><span className="spinner-border spinner-border-sm"></span>Signing...</> : <><i className="bi bi-safe2"></i> Sync Manual Record</>}
             </button>
             {txHash && (
               <p className="mt-3 text-xs text-slate-500 text-center font-medium">

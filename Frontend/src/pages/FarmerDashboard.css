@@ -17,8 +17,11 @@
 .farmer-dashboard::before {
   content: '';
   position: fixed;
-  top: 0; left: 0; width: 100%; height: 100%;
-  background: 
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background:
     radial-gradient(circle at 15% 20%, rgba(16, 185, 129, 0.05) 0%, transparent 40%),
     radial-gradient(circle at 85% 80%, rgba(245, 158, 11, 0.05) 0%, transparent 40%);
   pointer-events: none;
@@ -124,8 +127,17 @@
   padding: 1.5rem 2rem;
 }
 
-@media (max-width: 900px) { .farmer-stats { grid-template-columns: repeat(2, 1fr); } }
-@media (max-width: 500px) { .farmer-stats { grid-template-columns: 1fr; } }
+@media (max-width: 900px) {
+  .farmer-stats {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+@media (max-width: 500px) {
+  .farmer-stats {
+    grid-template-columns: 1fr;
+  }
+}
 
 .farmer-stat-card {
   display: flex;
@@ -142,16 +154,31 @@
 
 .farmer-stat-card:hover {
   transform: translateY(-5px);
-  box-shadow: 0 12px 30px rgba(0,0,0,0.5), 0 0 15px rgba(16, 185, 129, 0.1);
+  box-shadow: 0 12px 30px rgba(0, 0, 0, 0.5), 0 0 15px rgba(16, 185, 129, 0.1);
   border-color: rgba(16, 185, 129, 0.4);
 }
 
-.farmer-stat-card__icon { 
-    font-size: 2.2rem; 
-    filter: drop-shadow(0 0 8px var(--accent));
+.farmer-stat-card__icon {
+  font-size: 2.2rem;
+  filter: drop-shadow(0 0 8px var(--accent));
 }
-.farmer-stat-card__label { font-size: 0.7rem; color: #718a7c; margin: 0; font-weight: 600; text-transform: uppercase; letter-spacing: 0.1em; }
-.farmer-stat-card__value { font-size: 1.4rem; color: #fff; margin: 0; font-weight: 800; letter-spacing: -0.02em; }
+
+.farmer-stat-card__label {
+  font-size: 0.7rem;
+  color: #718a7c;
+  margin: 0;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+}
+
+.farmer-stat-card__value {
+  font-size: 1.4rem;
+  color: #fff;
+  margin: 0;
+  font-weight: 800;
+  letter-spacing: -0.02em;
+}
 
 /* ── Tab Navigation ── */
 .farmer-tabs {
@@ -176,7 +203,9 @@
   white-space: nowrap;
 }
 
-.farmer-tab:hover { color: #e2f3e8; }
+.farmer-tab:hover {
+  color: #e2f3e8;
+}
 
 .farmer-tab--active {
   color: #10b981;
@@ -185,7 +214,9 @@
 }
 
 /* ── Content Wrapper ── */
-.farmer-content { padding: 1.5rem 2rem 3rem; }
+.farmer-content {
+  padding: 1.5rem 2rem 3rem;
+}
 
 /* ── Harvest Cards ── */
 .farmer-harvest-list {
@@ -285,7 +316,9 @@
   font-weight: 600;
 }
 
-.farmer-blockchain-link:hover { text-decoration: underline; }
+.farmer-blockchain-link:hover {
+  text-decoration: underline;
+}
 
 .farmer-harvest-card__actions {
   display: flex;
@@ -323,7 +356,9 @@
   cursor: pointer;
 }
 
-.farmer-btn-details:hover { opacity: 0.9; }
+.farmer-btn-details:hover {
+  opacity: 0.9;
+}
 
 /* ── Modal Design ── */
 .farmer-modal-overlay {
@@ -350,8 +385,16 @@
   box-shadow: 0 20px 50px rgba(0, 0, 0, 0.5);
 }
 
-.farmer-modal h2 { margin-bottom: 0.5rem; color: #fff; }
-.farmer-modal p { color: #718a7c; font-size: 0.9rem; margin-bottom: 1.5rem; }
+.farmer-modal h2 {
+  margin-bottom: 0.5rem;
+  color: #fff;
+}
+
+.farmer-modal p {
+  color: #718a7c;
+  font-size: 0.9rem;
+  margin-bottom: 1.5rem;
+}
 
 .farmer-qr-container {
   background: #fff;
@@ -378,7 +421,12 @@
   color: #718a7c;
 }
 
-.farmer-empty-icon { font-size: 4rem; display: block; margin-bottom: 1rem; opacity: 0.5; }
+.farmer-empty-icon {
+  font-size: 4rem;
+  display: block;
+  margin-bottom: 1rem;
+  opacity: 0.5;
+}
 
 /* ── Loading ── */
 .farmer-loading {

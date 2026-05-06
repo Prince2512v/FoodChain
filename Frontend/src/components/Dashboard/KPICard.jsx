@@ -1,6 +1,6 @@
 import React from 'react';
 
-const KPICard = ({ title, value, icon, color, trend, onClick }) => (
+const KPICard = ({ title, value, icon, color, trend, progress = 70, onClick }) => (
     <div 
         className={`bg-white rounded-3xl p-6 border border-slate-200 shadow-sm relative overflow-hidden transition-all hover:shadow-md h-full w-full flex flex-col ${onClick ? 'cursor-pointer hover:scale-[1.02] active:scale-[0.98]' : ''}`}
         onClick={onClick}
@@ -47,7 +47,7 @@ const KPICard = ({ title, value, icon, color, trend, onClick }) => (
             <div className="h-1.5 w-full rounded-full overflow-hidden" style={{ backgroundColor: `${color}15` }}>
                 <div 
                     className="h-full rounded-full transition-all duration-1000" 
-                    style={{ width: '70%', backgroundColor: color }}
+                    style={{ width: `${progress}%`, backgroundColor: color }}
                 ></div>
             </div>
         </div>

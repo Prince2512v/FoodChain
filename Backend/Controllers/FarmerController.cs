@@ -24,19 +24,54 @@ namespace FoodSupplyChainAPI.Controllers
 
         // POST /api/farmer/product
         [HttpPost("product")]
-        public async Task<IActionResult> AddProduct([FromBody] Product product)
+        public async Task<IActionResult> AddProduct([FromBody] DTOs.ProductCreateDto dto)
         {
             var userId = GetUserId();
             if (userId == 0) return Unauthorized();
 
-            product.FarmerId = userId;
-            product.Timestamp = DateTime.UtcNow;
-            product.Status = "Created";
+            var product = new Product
+            {
+                ProductName = dto.ProductName,
+                CropType = dto.CropType,
+                Quantity = dto.Quantity,
+                Unit = dto.Unit,
+                HarvestDate = dto.HarvestDate,
+                FarmingMethod = dto.FarmingMethod,
+                FertilizerUsed = dto.FertilizerUsed,
+                Notes = dto.Notes,
+                LocationLat = dto.LocationLat,
+                LocationLong = dto.LocationLong,
+                Address = dto.Address,
+                BatchId = dto.BatchId,
+                ImageUrl = dto.ImageUrl,
+                BlockchainTxHash = dto.BlockchainTxHash,
+                FarmerId = userId,
+                Timestamp = DateTime.UtcNow,
+                Status = "Created",
+                QRCodeBase64 = string.Empty, // Will be generated if needed later
+                ProcessingTxHash = string.Empty,
+                RetailTxHash = string.Empty
+            };
 
-            _context.Products.Add(product);
-            await _context.SaveChangesAsync();
+            try
+            {
+                _context.Products.Add(product);
+                await _context.SaveChangesAsync();
+            }
+            catch (Exception ex)
+            {
+                var innerError = ex.InnerException?.Message ?? ex.Message;
+                return StatusCode(500, new { message = $"Database Save Failed: {innerError}" });
+            }
 
-            await LogAction("Harvest Logged", $"Farmer created new harvest: {product.ProductName} ({product.BatchId})");
+            try
+            {
+                await LogAction("Harvest Logged", $"Farmer created new harvest: {product.ProductName} ({product.BatchId})");
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"Logging failed: {ex.Message}");
+            }
 
             return Ok(product);
         }

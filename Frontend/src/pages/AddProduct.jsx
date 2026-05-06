@@ -116,23 +116,38 @@ const AddProduct = () => {
     const handleSubmit = async (e) => {
         e.preventDefault();
         setLoading(true);
+        setMessage({ text: '', type: '' });
         
         // 1. Upload to Blockchain first
         const txHash = await handleBlockchainUpload();
         if (!txHash) {
-            setLoading(false);
+            // handleBlockchainUpload already sets error message and loading=false
             return;
         }
 
         // 2. Save to Database
         try {
-            const payload = { ...formData, blockchainTxHash: txHash };
-            await api.post('/farmer/product', payload);
+            // Re-set loading because handleBlockchainUpload might have set it to false
+            setLoading(true); 
+            setMessage({ text: 'Syncing with Database...', type: 'info' });
+
+            const payload = { 
+                ...formData, 
+                quantity: parseFloat(formData.quantity) || 0, 
+                harvestDate: new Date(formData.harvestDate).toISOString(), // Full ISO format
+                blockchainTxHash: txHash 
+            };
+            
+            const response = await api.post('/farmer/product', payload);
             setMessage({ text: 'Product successfully registered on Blockchain and Database!', type: 'success' });
-            setTimeout(() => navigate('/dashboard'), 3000);
+            setTimeout(() => navigate('/dashboard'), 2000);
         } catch (error) {
-            console.error('Database error:', error);
-            setMessage({ text: 'Data saved to Blockchain but failed to sync with Database.', type: 'warning' });
+            console.error('Database sync error details:', error);
+            const serverMsg = error.response?.data?.message || error.response?.data || error.message;
+            setMessage({ 
+                text: `Blockchain success, but Database sync failed. Error: ${typeof serverMsg === 'object' ? JSON.stringify(serverMsg) : serverMsg}`, 
+                type: 'warning' 
+            });
         } finally {
             setLoading(false);
         }

@@ -1,5 +1,6 @@
 import React, { useState, useEffect, useContext } from 'react';
 import { AuthContext } from '../../context/AuthContext';
+import api from '../../services/api';
 
 const NexusAuditLogs = () => {
     const { token } = useContext(AuthContext);
@@ -9,12 +10,9 @@ const NexusAuditLogs = () => {
     const fetchLogs = async () => {
         try {
             // Using the admin-specific transactions endpoint for richer data
-            const res = await fetch('http://localhost:5160/api/admin/transactions', {
-                headers: { Authorization: `Bearer ${token}` }
-            });
-            const data = await res.json();
+            const res = await api.get('/Admin/transactions');
             // Take top 10 for the overview
-            setLogs(data.slice(0, 10));
+            setLogs(res.data.slice(0, 10));
         } catch (err) {
             console.error(err);
         } finally {

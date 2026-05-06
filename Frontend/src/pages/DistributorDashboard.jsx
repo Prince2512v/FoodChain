@@ -12,6 +12,7 @@ import StorageConditionForm from '../components/Distributor/StorageConditionForm
 import DeliveryStatusTracker from '../components/Distributor/DeliveryStatusTracker';
 import IssueReportForm from '../components/Distributor/IssueReportForm';
 import LogisticsMap from '../components/Distributor/LogisticsMap';
+import UniversalMetricModal from '../components/Dashboard/UniversalMetricModal';
 
 const DistributorDashboard = () => {
     const { token, user } = useContext(AuthContext);
@@ -22,6 +23,8 @@ const DistributorDashboard = () => {
     const [activeTab, setActiveTab] = useState('available');
     const [selectedShipment, setSelectedShipment] = useState(null);
     const [shipmentLogs, setShipmentLogs] = useState([]);
+    const [showMetricModal, setShowMetricModal] = useState(false);
+    const [selectedMetric, setSelectedMetric] = useState(null);
     const navigate = useNavigate();
 
     useEffect(() => {
@@ -114,25 +117,32 @@ const DistributorDashboard = () => {
                         value={summary.inTransit || 0} 
                         icon="🚛" 
                         color="#0ea5e9" 
-                        trend={+2} 
-                        onClick={() => navigate('/dist-active-shipments')}
+                        trend={0} 
+                        onClick={() => { setSelectedMetric('active'); setShowMetricModal(true); }}
                     />
                     <KPICard 
                         title="Queue" 
                         value={summary.packaged || 0} 
                         icon="📦" 
                         color="#10b981" 
-                        trend={-5} 
-                        onClick={() => navigate('/dist-queue')}
+                        trend={0} 
+                        onClick={() => { setSelectedMetric('queue'); setShowMetricModal(true); }}
                     />
-                    <KPICard title="Delivery Rate" value="98%" icon="✅" color="#f59e0b" trend={+1} />
+                    <KPICard 
+                        title="Delivery Rate" 
+                        value={summary.delivered ? `${Math.round((summary.delivered / (summary.total || 1)) * 100)}%` : '0%'} 
+                        icon="✅" 
+                        color="#f59e0b" 
+                        trend={0} 
+                        onClick={() => { setSelectedMetric('delivered'); setShowMetricModal(true); }}
+                    />
                     <KPICard 
                         title="Active Alerts" 
                         value={summary.rejected || 0} 
                         icon="⚠️" 
                         color="#ef4444" 
                         trend={0} 
-                        onClick={() => navigate('/dist-alerts')}
+                        onClick={() => { setSelectedMetric('alerts'); setShowMetricModal(true); }}
                     />
                 </div>
 
@@ -212,6 +222,12 @@ const DistributorDashboard = () => {
                     )}
                 </div>
                 
+                <UniversalMetricModal 
+                    isOpen={showMetricModal} 
+                    onClose={() => setShowMetricModal(false)} 
+                    type={selectedMetric}
+                    role="Distributor"
+                />
             </main>
         </div>
     );

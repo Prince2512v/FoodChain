@@ -37,20 +37,27 @@ namespace FoodSupplyChainAPI.Controllers
                 productsQuery = productsQuery.Where(p => p.ProcessorId == userId);
             } else if (role == "Distributor") {
                 shipmentsQuery = shipmentsQuery.Where(s => s.DistributorId == userId);
+                productsQuery = productsQuery.Where(p => p.DistributorId == userId);
             } else if (role == "Retailer") {
                 productsQuery = productsQuery.Where(p => p.RetailerId == userId);
             }
 
             var totalStats = new {
-                Total = await productsQuery.CountAsync(),
+                Total = role == "Distributor" 
+                    ? await shipmentsQuery.CountAsync()
+                    : await productsQuery.CountAsync(),
                 Processing = await productsQuery.CountAsync(p => p.Status == "Processing"),
                 Packaged = await productsQuery.CountAsync(p => p.Status == "Packaged"),
                 InTransit = role == "Distributor" 
                     ? await shipmentsQuery.CountAsync(s => s.Status == "In Transit")
                     : await productsQuery.CountAsync(p => p.Status == "In Transit"),
-                Delivered = await productsQuery.CountAsync(p => p.Status == "Completed" || p.Status == "Delivered"),
+                Delivered = role == "Distributor"
+                    ? await shipmentsQuery.CountAsync(s => s.Status == "Delivered")
+                    : await productsQuery.CountAsync(p => p.Status == "Completed" || p.Status == "Delivered"),
                 Available = await productsQuery.CountAsync(p => p.Status == "Available"),
-                Rejected = await productsQuery.CountAsync(p => p.IsRejected || p.Status == "Rejected")
+                Rejected = role == "Distributor"
+                    ? await shipmentsQuery.CountAsync(s => s.Status == "Rejected")
+                    : await productsQuery.CountAsync(p => p.IsRejected || p.Status == "Rejected")
             };
 
             return Ok(totalStats);
@@ -68,14 +75,25 @@ namespace FoodSupplyChainAPI.Controllers
                 .OrderBy(d => d)
                 .ToList();
 
+            var startDate = last7Days.First();
+            var endDate = last7Days.Last().AddDays(1);
+
+            var products = await _context.Products
+                .Where(p => p.Timestamp >= startDate && p.Timestamp < endDate)
+                .Where(p => role == "Admin" || (role == "Farmer" && p.FarmerId == userId) || (role == "Processor" && p.ProcessorId == userId))
+                .Select(p => new { p.Timestamp.Date })
+                .ToListAsync();
+
+            var issues = await _context.ShipmentIssues
+                .Where(i => i.Timestamp >= startDate && i.Timestamp < endDate)
+                .Select(i => new { i.Timestamp.Date })
+                .ToListAsync();
+
             var performanceData = last7Days.Select(date => new
             {
                 Date = date.ToString("MMM dd"),
-                Count = _context.Products.Count(p => 
-                    p.Timestamp.Date == date && 
-                    (role == "Admin" || (role == "Farmer" && p.FarmerId == userId) || (role == "Processor" && p.ProcessorId == userId))
-                ),
-                Issues = _context.ShipmentIssues.Count(i => i.Timestamp.Date == date)
+                Count = products.Count(p => p.Date == date),
+                Issues = issues.Count(i => i.Date == date)
             }).ToList();
 
             return Ok(performanceData);

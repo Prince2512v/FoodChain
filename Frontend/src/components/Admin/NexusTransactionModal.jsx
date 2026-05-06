@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import api from '../../services/api';
 
 const NexusTransactionModal = ({ isOpen, onClose, token }) => {
     const [txs, setTxs] = useState([]);
@@ -13,11 +14,8 @@ const NexusTransactionModal = ({ isOpen, onClose, token }) => {
     const fetchTxs = async () => {
         setLoading(true);
         try {
-            const res = await fetch('http://localhost:5160/api/admin/transactions', {
-                headers: { Authorization: `Bearer ${token}` }
-            });
-            const data = await res.json();
-            setTxs(data);
+            const res = await api.get('/Admin/transactions');
+            setTxs(res.data);
         } catch (err) {
             console.error(err);
         } finally {

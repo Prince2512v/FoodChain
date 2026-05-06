@@ -6,13 +6,17 @@ import {
 } from 'recharts';
 
 const OverviewChart = ({ data, title }) => {
-    // Mock data for the distribution pie if specific data isn't passed
-    const distributionData = [
-        { name: 'Harvested', value: 400, color: '#10b981' },
-        { name: 'Processing', value: 300, color: '#6366f1' },
-        { name: 'Shipped', value: 200, color: '#0ea5e9' },
-        { name: 'In Store', value: 100, color: '#f59e0b' },
-    ];
+    // Derive distribution from actual data
+    const totalCount = data?.reduce((sum, d) => sum + (d.count || 0), 0) || 0;
+    const totalIssues = data?.reduce((sum, d) => sum + (d.issues || 0), 0) || 0;
+    const distributionData = totalCount > 0 || totalIssues > 0
+        ? [
+            { name: 'Harvested', value: totalCount || 1, color: '#10b981' },
+            { name: 'Issues', value: totalIssues || 0, color: '#ec4899' },
+          ].filter(d => d.value > 0)
+        : [
+            { name: 'No Data', value: 1, color: '#cbd5e1' },
+          ];
 
     return (
         <div className="glass-panel p-4 h-100 animate-fade-in">

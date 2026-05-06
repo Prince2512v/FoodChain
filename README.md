@@ -25,6 +25,77 @@ Quantum FoodChain integrates a React frontend, an ASP.NET Core backend, and Soli
 - `contracts/` - Solidity smart contracts (`SupplyChain.sol`)
 - `scripts/` - Smart contract deployment scripts
 
+---
+
+## 📸 Application Screenshots
+
+### 1. Farmer — Add Product Screen
+The Farmer Portal provides a multi-step wizard for registering new crop harvests on the blockchain. It includes Product Identity, Harvest Details, and Chain Submission with geo-tagging and cryptographic signature for immutable provenance.
+
+![Farmer Add Product - Step 1](screenshots/01_farmer_add_product.png)
+
+![Farmer Add Product - Step 3 (Chain Submission)](screenshots/01b_farmer_add_product_step3.png)
+
+---
+
+### 2. Processor — Quality / Processing Screen
+The Processor Dashboard (Manufacturing Node) shows real-time metrics including Queue Size, In Process, Packaged items, and Quality Alerts. The Processing Form allows batch-level quality checks with IPFS certificate uploads and blockchain signing.
+
+![Processor Dashboard](screenshots/02_processor_dashboard.png)
+
+![Processor Processing Form](screenshots/02b_processor_processing.png)
+
+---
+
+### 3. Distributor — Shipment Screen
+The Distributor Terminal (Logistics Intelligence Node) displays Active Shipments, Queue, Delivery Rate, and Active Alerts. It supports Live Tracking with real-time cargo assignment scanning across the supply chain network.
+
+![Distributor Shipment Dashboard](screenshots/03_distributor_shipment.png)
+
+---
+
+### 4. Retailer — Inventory / Receive Screen
+The Retailer Hub (Commercial Distribution Node) shows Current Stock, Pending Arrival, Sold Items, and Active Alerts. Features Store Sales & Inventory Flow analytics and a Blockchain Audit Log for full traceability.
+
+![Retailer Inventory Dashboard](screenshots/04_retailer_inventory.png)
+
+---
+
+### 5. Consumer — Product History Page
+The Consumer Traceability Portal allows users to Track Your Food by entering a Batch ID or scanning a QR code. Displays the complete blockchain-verified supply chain journey from farm to shelf.
+
+![Consumer Product History](screenshots/05_consumer_product_history.png)
+
+---
+
+### 6. Hardhat Node Running
+Local Ethereum blockchain node running via Hardhat with 20 pre-funded accounts (10,000 ETH each) for development and testing.
+
+![Hardhat Node Running](screenshots/06_hardhat_node_running.png)
+
+---
+
+### 7. Smart Contract Deployed
+Successful deployment of the `SupplyChain.sol` smart contract to the local Hardhat network, showing the contract address, transaction hash, and gas usage.
+
+![Contract Deployed](screenshots/07_contract_deployed.png)
+
+---
+
+### 8. Backend API Running
+ASP.NET Core Web API running on `http://localhost:5160` in Development mode with Swagger UI available for API testing.
+
+![Backend Running](screenshots/08_backend_running.png)
+
+---
+
+### 9. Login Page
+The Quantum FoodChain authentication portal with role-based access control. Supports multiple roles including Admin, Farmer, Processor, Distributor, Retailer, and Consumer with demo credentials for testing.
+
+![Login Page](screenshots/09_login_page.png)
+
+---
+
 ## Getting Started
 
 ### 1. Prerequisites

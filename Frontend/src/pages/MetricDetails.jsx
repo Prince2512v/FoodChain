@@ -82,17 +82,26 @@ const MetricDetails = (props) => {
             const allProducts = res.data || [];
             
             // Map statuses for stakeholders if needed
-            let targetStatus = config.status;
-            if (user?.role === 'Distributor' && type === 'processing') targetStatus = 'In Transit';
+            let targetStatuses = [config.status];
+            if (type === 'delivered' && user?.role !== 'Retailer') {
+                targetStatuses = ['Completed', 'Delivered'];
+            }
+            if (user?.role === 'Distributor' && type === 'processing') targetStatuses = ['In Transit'];
             else if (user?.role === 'Retailer') {
-                if (type === 'delivered') targetStatus = 'Received';
-                else if (type === 'processing') targetStatus = 'Delivered';
+                if (type === 'delivered') targetStatuses = ['Received'];
+                else if (type === 'processing') targetStatuses = ['Delivered'];
             }
 
             // Case-insensitive filtering to ensure matching
             const filtered = allProducts.filter(p => {
                 const pStatus = (p.status || p.Status || '').toLowerCase();
-                return pStatus === targetStatus.toLowerCase();
+                
+                // Special case for alerts to match backend logic
+                if (type === 'alerts') {
+                    return p.isRejected || p.IsRejected || pStatus === 'rejected';
+                }
+                
+                return targetStatuses.some(ts => ts.toLowerCase() === pStatus);
             });
             setProducts(filtered);
         } catch (err) {

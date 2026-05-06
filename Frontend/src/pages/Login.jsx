@@ -141,15 +141,21 @@ const Login = () => {
                                 Authorized Demo Access
                             </h4>
                             <div className="space-y-2 text-xs">
-                                <div className="flex justify-between items-center text-slate-500">
-                                    <span className="font-semibold flex items-center gap-1.5 object-cover">
-                                        <i className="bi bi-shield-lock-fill text-sky-500"></i> Admin
+                                <div 
+                                    className="flex justify-between items-center text-slate-500 hover:bg-slate-100/50 p-1.5 rounded-xl transition-colors cursor-pointer group"
+                                    onClick={() => { setEmail('admin@demo.com'); setPassword('123456'); }}
+                                >
+                                    <span className="font-semibold flex items-center gap-1.5">
+                                        <i className="bi bi-shield-lock-fill text-sky-500 group-hover:scale-110 transition-transform"></i> Admin
                                     </span>
                                     <span className="font-bold text-slate-700">admin@demo.com</span>
                                 </div>
-                                <div className="flex justify-between items-center text-slate-500">
+                                <div 
+                                    className="flex justify-between items-center text-slate-500 hover:bg-slate-100/50 p-1.5 rounded-xl transition-colors cursor-pointer group"
+                                    onClick={() => { setEmail('farmer@demo.com'); setPassword('123456'); }}
+                                >
                                     <span className="font-semibold flex items-center gap-1.5">
-                                        <i className="bi bi-flower1 text-emerald-500"></i> Farmer
+                                        <i className="bi bi-flower1 text-emerald-500 group-hover:scale-110 transition-transform"></i> Farmer
                                     </span>
                                     <span className="font-bold text-slate-700">farmer@demo.com</span>
                                 </div>

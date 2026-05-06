@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import api from '../../services/api';
 
 const NexusSecurityModal = ({ isOpen, onClose, token }) => {
     const [alerts, setAlerts] = useState([]);
@@ -13,11 +14,8 @@ const NexusSecurityModal = ({ isOpen, onClose, token }) => {
     const fetchAlerts = async () => {
         setLoading(true);
         try {
-            const res = await fetch('http://localhost:5160/api/admin/fraud-alerts', {
-                headers: { Authorization: `Bearer ${token}` }
-            });
-            const data = await res.json();
-            setAlerts(data);
+            const res = await api.get('/Admin/fraud-alerts');
+            setAlerts(res.data);
         } catch (err) {
             console.error(err);
         } finally {

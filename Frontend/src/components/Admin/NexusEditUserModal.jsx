@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import api from '../../services/api';
 
 const NexusEditUserModal = ({ isOpen, onClose, user, token, onUpdate }) => {
     const [formData, setFormData] = useState({
@@ -22,16 +23,9 @@ const NexusEditUserModal = ({ isOpen, onClose, user, token, onUpdate }) => {
         e.preventDefault();
         setLoading(true);
         try {
-            const res = await fetch(`http://localhost:5160/api/admin/users/${user.id}`, {
-                method: 'PUT',
-                headers: {
-                    'Content-Type': 'application/json',
-                    'Authorization': `Bearer ${token}`
-                },
-                body: JSON.stringify(formData)
-            });
+            const res = await api.put(`/Admin/users/${user.id}`, formData);
 
-            if (res.ok) {
+            if (res.status === 200) {
                 onUpdate();
                 onClose();
             }

@@ -9,6 +9,7 @@ import IncomingProducts from '../components/Processor/IncomingProducts';
 import ProcessingForm from '../components/Processor/ProcessingForm';
 import QualityCheckForm from '../components/Processor/QualityCheckForm';
 import PackagingForm from '../components/Processor/PackagingForm';
+import UniversalMetricModal from '../components/Dashboard/UniversalMetricModal';
 import api from '../services/api';
 
 const ProcessorDashboard = () => {
@@ -20,6 +21,8 @@ const ProcessorDashboard = () => {
     const [loading, setLoading] = useState(true);
     const [selectedProduct, setSelectedProduct] = useState(null);
     const [viewMode, setViewMode] = useState('list'); // 'list', 'process', 'quality', 'package'
+    const [showMetricModal, setShowMetricModal] = useState(false);
+    const [selectedMetric, setSelectedMetric] = useState(null);
     const navigate = useNavigate();
 
     const fetchDashboardData = useCallback(async () => {
@@ -105,32 +108,32 @@ const ProcessorDashboard = () => {
                         value={incomingProducts.length} 
                         icon="📥" 
                         color="#f97316" 
-                        trend={+2} 
-                        onClick={() => navigate('/queue-details')}
+                        trend={0} 
+                        onClick={() => { setSelectedMetric('queue'); setShowMetricModal(true); }}
                     />
                     <KPICard 
                         title="In Process" 
                         value={summary.processing || 0} 
                         icon="⚙️" 
                         color="#3b82f6" 
-                        trend={+5} 
-                        onClick={() => navigate('/proc-processing-details')}
+                        trend={0} 
+                        onClick={() => { setSelectedMetric('processing'); setShowMetricModal(true); }}
                     />
                     <KPICard 
                         title="Packaged" 
                         value={summary.packaged || 0} 
                         icon="📦" 
                         color="#10b981" 
-                        trend={+9} 
-                        onClick={() => navigate('/packaged-details')}
+                        trend={0} 
+                        onClick={() => { setSelectedMetric('packaged'); setShowMetricModal(true); }}
                     />
                     <KPICard 
                         title="Quality Alerts" 
                         value={summary.rejected || 0} 
                         icon="⚠️" 
                         color="#ef4444" 
-                        trend={-1} 
-                        onClick={() => navigate('/proc-quality-alerts')}
+                        trend={0} 
+                        onClick={() => { setSelectedMetric('alerts'); setShowMetricModal(true); }}
                     />
                 </div>
 
@@ -206,6 +209,13 @@ const ProcessorDashboard = () => {
                         )}
                     </div>
                 </div>
+
+                <UniversalMetricModal 
+                    isOpen={showMetricModal} 
+                    onClose={() => setShowMetricModal(false)} 
+                    type={selectedMetric}
+                    role="Processor"
+                />
             </main>
         </div>
     );

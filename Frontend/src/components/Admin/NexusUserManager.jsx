@@ -1,6 +1,7 @@
 import React, { useState, useEffect, useContext } from 'react';
 import { AuthContext } from '../../context/AuthContext';
 import NexusEditUserModal from './NexusEditUserModal';
+import api from '../../services/api';
 
 const NexusUserManager = () => {
     const { token } = useContext(AuthContext);
@@ -19,11 +20,8 @@ const NexusUserManager = () => {
     const fetchUsers = async () => {
         setLoading(true);
         try {
-            const res = await fetch('http://localhost:5160/api/admin/users', {
-                headers: { Authorization: `Bearer ${token}` }
-            });
-            const data = await res.json();
-            setUsers(data);
+            const res = await api.get('/Admin/users');
+            setUsers(res.data);
         } catch (err) {
             console.error(err);
         } finally {
@@ -36,11 +34,8 @@ const NexusUserManager = () => {
         if (!window.confirm(`Are you sure you want to ${action} ${user.name}?`)) return;
         
         try {
-            const res = await fetch(`http://localhost:5160/api/admin/users/${user.id}/${action}`, {
-                method: 'PUT',
-                headers: { Authorization: `Bearer ${token}` }
-            });
-            if (res.ok) fetchUsers();
+            const res = await api.put(`/Admin/users/${user.id}/${action}`);
+            if (res.status === 200) fetchUsers();
         } catch (err) {
             console.error(err);
         }
@@ -50,11 +45,8 @@ const NexusUserManager = () => {
         if (!window.confirm(`PERMANENT DELETION: Are you sure you want to purge ${user.name} from the protocol? This cannot be undone.`)) return;
         
         try {
-            const res = await fetch(`http://localhost:5160/api/admin/users/${user.id}`, {
-                method: 'DELETE',
-                headers: { Authorization: `Bearer ${token}` }
-            });
-            if (res.ok) fetchUsers();
+            const res = await api.delete(`/Admin/users/${user.id}`);
+            if (res.status === 200) fetchUsers();
         } catch (err) {
             console.error(err);
         }

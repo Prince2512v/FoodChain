@@ -9,6 +9,7 @@ import InventoryList from '../components/Retailer/InventoryList';
 import PendingShipments from '../components/Retailer/PendingShipments';
 import VerificationModal from '../components/Retailer/VerificationModal';
 import ManualStockModal from '../components/Retailer/ManualStockModal';
+import UniversalMetricModal from '../components/Dashboard/UniversalMetricModal';
 import api from '../services/api';
 
 const RetailerDashboard = () => {
@@ -22,6 +23,8 @@ const RetailerDashboard = () => {
     const [activeTab, setActiveTab] = useState('inventory');
     const [verifyingShipment, setVerifyingShipment] = useState(null);
     const [showManualModal, setShowManualModal] = useState(false);
+    const [showMetricModal, setShowMetricModal] = useState(false);
+    const [selectedMetric, setSelectedMetric] = useState(null);
     const navigate = useNavigate();
 
     const handleManualEntry = (newProduct) => {
@@ -119,25 +122,31 @@ const RetailerDashboard = () => {
                         value={inventory.length || 0} 
                         icon="📦" 
                         color="#f59e0b" 
-                        trend={+3} 
-                        onClick={() => navigate('/ret-stock')}
+                        trend={0} 
+                        onClick={() => { setSelectedMetric('stock'); setShowMetricModal(true); }}
                     />
                     <KPICard 
                         title="Pending Arrival" 
                         value={shipments.length || 0} 
                         icon="🚚" 
                         color="#3b82f6" 
-                        trend={+2} 
-                        onClick={() => navigate('/ret-pending')}
+                        trend={0} 
+                        onClick={() => { setSelectedMetric('pending'); setShowMetricModal(true); }}
                     />
-                    <KPICard title="Sold Items" value="1,240" icon="✅" color="#10b981" trend={+15} />
+                    <KPICard 
+                        title="Sold Items" 
+                        value={inventory.reduce((sum, item) => sum + (item.soldQuantity || 0), 0)} 
+                        icon="✅" 
+                        color="#10b981" 
+                        trend={0} 
+                    />
                     <KPICard 
                         title="Active Alerts" 
                         value={summary.rejected || 0} 
                         icon="⚠️" 
                         color="#ef4444" 
                         trend={0} 
-                        onClick={() => navigate('/ret-alerts')}
+                        onClick={() => { setSelectedMetric('alerts'); setShowMetricModal(true); }}
                     />
                 </div>
 
@@ -206,6 +215,13 @@ const RetailerDashboard = () => {
                 show={showManualModal} 
                 onHide={() => setShowManualModal(false)}
                 onConfirm={handleManualEntry}
+            />
+
+            <UniversalMetricModal 
+                isOpen={showMetricModal} 
+                onClose={() => setShowMetricModal(false)} 
+                type={selectedMetric}
+                role="Retailer"
             />
         </div>
     );

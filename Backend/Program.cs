@@ -103,4 +103,19 @@ app.UseAuthorization();
 app.MapControllers();
 app.MapHub<DashboardHub>("/dashboardHub");
 
+// Seed Data
+using (var scope = app.Services.CreateScope())
+{
+    var services = scope.ServiceProvider;
+    try
+    {
+        var context = services.GetRequiredService<ApplicationDbContext>();
+        await FoodSupplyChainAPI.Seeder.SeedAsync(context);
+    }
+    catch (Exception ex)
+    {
+        Console.WriteLine("An error occurred while seeding the database: " + ex.Message);
+    }
+}
+
 app.Run();

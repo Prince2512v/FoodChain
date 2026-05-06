@@ -4,23 +4,19 @@ import Navbar from '../components/Navbar';
 import KPICard from '../components/Dashboard/KPICard';
 import NexusUserManager from '../components/Admin/NexusUserManager';
 import NexusAuditLogs from '../components/Admin/NexusAuditLogs';
-import NexusProductModal from '../components/Admin/NexusProductModal';
-import NexusUserModal from '../components/Admin/NexusUserModal';
-import NexusTransactionModal from '../components/Admin/NexusTransactionModal';
 import NexusSecurityModal from '../components/Admin/NexusSecurityModal';
 import NexusNetworkChart from '../components/Admin/NexusNetworkChart';
 import FraudPanel from '../components/Admin/FraudPanel';
-import SystemSettings from '../components/Admin/SystemSettings';
-import './AdminDashboard.css';
+import UniversalMetricModal from '../components/Dashboard/UniversalMetricModal';
+import api from '../services/api';
 
 const AdminDashboard = () => {
     const { token } = useContext(AuthContext);
     const [activeTab, setActiveTab] = useState('overview');
     const [loading, setLoading] = useState(true);
-    const [showProductModal, setShowProductModal] = useState(false);
-    const [showUserModal, setShowUserModal] = useState(false);
-    const [showTxModal, setShowTxModal] = useState(false);
     const [showSecurityModal, setShowSecurityModal] = useState(false);
+    const [showMetricModal, setShowMetricModal] = useState(false);
+    const [selectedMetric, setSelectedMetric] = useState(null);
     const [stats, setStats] = useState({
         totalProducts: 0,
         activeNodes: 0,
@@ -33,26 +29,24 @@ const AdminDashboard = () => {
         const fetchStats = async () => {
             try {
                 const [statsRes, fraudRes] = await Promise.all([
-                    fetch('http://localhost:5160/api/admin/stats', { headers: { Authorization: `Bearer ${token}` } }),
-                    fetch('http://localhost:5160/api/admin/fraud-alerts', { headers: { Authorization: `Bearer ${token}` } })
+                    api.get('/Admin/stats'),
+                    api.get('/Admin/fraud-alerts')
                 ]);
 
-                if (statsRes.ok && fraudRes.ok) {
-                    const statsData = await statsRes.json();
-                    const fraudData = await fraudRes.json();
+                const statsData = statsRes.data;
+                const fraudData = fraudRes.data;
 
-                    const totalTxs = statsData.summary.totalTransactions || 0;
-                    const criticalThreats = fraudData.filter(a => a.severity === 'Critical').length;
-                    const highThreats = fraudData.filter(a => a.severity === 'High').length;
+                const totalTxs = statsData.summary.totalTransactions || 0;
+                const criticalThreats = fraudData.filter(a => a.severity === 'Critical').length;
+                const highThreats = fraudData.filter(a => a.severity === 'High').length;
 
-                    setStats({
-                        totalProducts: statsData.summary.totalProducts,
-                        activeNodes: statsData.summary.totalUsers,
-                        txVolume: totalTxs > 1000 ? (totalTxs / 1000).toFixed(1) + 'K' : totalTxs.toString(),
-                        threatLevel: criticalThreats > 0 ? 'Critical' : (highThreats > 0 ? 'Elevated' : 'Secure')
-                    });
-                    setChartData(statsData.chartData || []);
-                }
+                setStats({
+                    totalProducts: statsData.summary.totalProducts,
+                    activeNodes: statsData.summary.totalUsers,
+                    txVolume: totalTxs > 1000 ? (totalTxs / 1000).toFixed(1) + 'K' : totalTxs.toString(),
+                    threatLevel: criticalThreats > 0 ? 'Critical' : (highThreats > 0 ? 'Elevated' : 'Secure')
+                });
+                setChartData(statsData.chartData || []);
             } catch (err) {
                 console.error("Stats fetch error:", err);
             } finally {
@@ -103,7 +97,7 @@ const AdminDashboard = () => {
                         color="#8b5cf6" 
                         trend={+5.2}
                         progress={Math.min(100, (stats.totalProducts / 2000) * 100)}
-                        onClick={() => setShowProductModal(true)}
+                        onClick={() => { setSelectedMetric('flow'); setShowMetricModal(true); }}
                     />
                     <KPICard 
                         title="Authorized Nodes" 
@@ -112,7 +106,7 @@ const AdminDashboard = () => {
                         color="#06b6d4" 
                         trend={+1.8}
                         progress={Math.min(100, (stats.activeNodes / 100) * 100)}
-                        onClick={() => setShowUserModal(true)}
+                        onClick={() => { setSelectedMetric('nodes'); setShowMetricModal(true); }}
                     />
                     <KPICard 
                         title="Transaction Volume" 
@@ -121,7 +115,7 @@ const AdminDashboard = () => {
                         color="#10b981" 
                         trend={+12.4}
                         progress={Math.min(100, (parseInt(stats.txVolume) / 500) * 100)}
-                        onClick={() => setShowTxModal(true)}
+                        onClick={() => { setSelectedMetric('volume'); setShowMetricModal(true); }}
                     />
                     <KPICard 
                         title="Threat Status" 
@@ -130,7 +124,7 @@ const AdminDashboard = () => {
                         color={stats.threatLevel === 'Secure' ? '#10b981' : (stats.threatLevel === 'Elevated' ? '#f59e0b' : '#f43f5e')} 
                         trend={stats.threatLevel === 'Secure' ? -100 : 0}
                         progress={stats.threatLevel === 'Secure' ? 5 : (stats.threatLevel === 'Elevated' ? 45 : 95)}
-                        onClick={() => setShowSecurityModal(true)}
+                        onClick={() => { setSelectedMetric('alerts'); setShowMetricModal(true); }}
                     />
                 </div>
 
@@ -180,25 +174,11 @@ const AdminDashboard = () => {
                     )}
                 </div>
 
-                <NexusProductModal 
-                    isOpen={showProductModal} 
-                    onClose={() => setShowProductModal(false)} 
-                    token={token}
-                />
-                <NexusUserModal 
-                    isOpen={showUserModal} 
-                    onClose={() => setShowUserModal(false)} 
-                    token={token}
-                />
-                <NexusTransactionModal 
-                    isOpen={showTxModal} 
-                    onClose={() => setShowTxModal(false)} 
-                    token={token}
-                />
-                <NexusSecurityModal 
-                    isOpen={showSecurityModal} 
-                    onClose={() => setShowSecurityModal(false)} 
-                    token={token}
+                <UniversalMetricModal 
+                    isOpen={showMetricModal} 
+                    onClose={() => setShowMetricModal(false)} 
+                    type={selectedMetric}
+                    role="Admin"
                 />
             </main>
         </div>

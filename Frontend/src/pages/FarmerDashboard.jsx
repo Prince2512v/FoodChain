@@ -6,6 +6,7 @@ import KPICard from '../components/Dashboard/KPICard';
 import OverviewChart from '../components/Dashboard/OverviewChart';
 import ActivityFeed from '../components/Dashboard/ActivityFeed';
 import HarvestList from '../components/Farmer/HarvestList';
+import UniversalMetricModal from '../components/Dashboard/UniversalMetricModal';
 import { QRCodeSVG } from 'qrcode.react';
 import api from '../services/api';
 
@@ -18,6 +19,8 @@ const FarmerDashboard = () => {
     const [loading, setLoading] = useState(true);
     const [showQR, setShowQR] = useState(false);
     const [selectedBatch, setSelectedBatch] = useState(null);
+    const [showMetricModal, setShowMetricModal] = useState(false);
+    const [selectedMetric, setSelectedMetric] = useState(null);
     const navigate = useNavigate();
 
     const fetchDashboardData = useCallback(async () => {
@@ -51,9 +54,17 @@ const FarmerDashboard = () => {
         setShowQR(true);
     };
 
-    if (loading || !summary) return (
+    const [isClient, setIsClient] = useState(false);
+    useEffect(() => {
+        setIsClient(true);
+    }, []);
+
+    if (loading || !summary || !isClient) return (
         <div className="min-h-screen bg-slate-50 flex items-center justify-center">
-            <div className="animate-spin rounded-full h-12 w-12 border-4 border-emerald-500 border-t-transparent"></div>
+            <div className="flex flex-col items-center gap-4">
+                <div className="animate-spin rounded-full h-12 w-12 border-4 border-emerald-500 border-t-transparent"></div>
+                <p className="text-emerald-700 font-bold animate-pulse tracking-widest uppercase text-xs">Synchronizing Nodes...</p>
+            </div>
         </div>
     );
 
@@ -93,24 +104,24 @@ const FarmerDashboard = () => {
                         value={summary.total || 0}
                         icon="🌾"
                         color="#10b981"
-                        trend={+4}
-                        onClick={() => navigate('/yield-details')}
+                        trend={0}
+                        onClick={() => { setSelectedMetric('yield'); setShowMetricModal(true); }}
                     />
                     <KPICard
                         title="In Processing"
                         value={summary.processing || 0}
                         icon="🏭"
                         color="#3b82f6"
-                        trend={+1}
-                        onClick={() => navigate('/processing-details')}
+                        trend={0}
+                        onClick={() => { setSelectedMetric('processing'); setShowMetricModal(true); }}
                     />
                     <KPICard
                         title="Delivered"
                         value={summary.delivered || 0}
                         icon="🚚"
                         color="#8b5cf6"
-                        trend={+12}
-                        onClick={() => navigate('/delivered-details')}
+                        trend={0}
+                        onClick={() => { setSelectedMetric('delivered'); setShowMetricModal(true); }}
                     />
                     <KPICard
                         title="Quality Alerts"
@@ -118,7 +129,7 @@ const FarmerDashboard = () => {
                         icon="⚠️"
                         color="#ef4444"
                         trend={0}
-                        onClick={() => navigate('/quality-alerts')}
+                        onClick={() => { setSelectedMetric('alerts'); setShowMetricModal(true); }}
                     />
                 </div>
 
@@ -156,6 +167,13 @@ const FarmerDashboard = () => {
                         />
                     </div>
                 </div>
+
+                <UniversalMetricModal 
+                    isOpen={showMetricModal} 
+                    onClose={() => setShowMetricModal(false)} 
+                    type={selectedMetric}
+                    role="Farmer"
+                />
             </main>
 
             {/* QR Modal Overlay */}

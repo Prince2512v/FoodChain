@@ -1,0 +1,215 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id        Int      @id @default(autoincrement())
+  name      String
+  email     String   @unique
+  password  String
+  role      String   // Farmer, Processor, Distributor, Retailer, Admin
+  status    String   @default("Active") // Active, Blocked
+  createdAt DateTime @default(now())
+
+  // Relations
+  farmerProducts     Product[] @relation("FarmerProducts")
+  processorProducts  Product[] @relation("ProcessorProducts")
+  distributorProducts Product[] @relation("DistributorProducts")
+  retailerProducts   Product[] @relation("RetailerProducts")
+  shipments          Shipment[]
+}
+
+model Product {
+  id              Int      @id @default(autoincrement())
+  productName     String
+  cropType        String
+  quantity        Decimal
+  unit            String
+  harvestDate     DateTime @default(now())
+  farmingMethod   String   @default("Conventional")
+  fertilizerUsed  String?
+  notes           String?
+  
+  // Farm Location
+  locationLat     String?
+  locationLong    String?
+  address         String?
+
+  // Supply Chain
+  batchId         String   @unique
+  qrCodeBase64    String?
+  timestamp       DateTime @default(now())
+  blockchainTxHash String?
+  status          String   @default("Created") // Created, Processing, Completed
+  
+  qualityStatus   String   @default("Pending")
+  isRejected      Boolean  @default(false)
+
+  // Ownership
+  farmerId        Int?
+  farmer          User?    @relation("FarmerProducts", fields: [farmerId], references: [id])
+  
+  processorId     Int?
+  processor       User?    @relation("ProcessorProducts", fields: [processorId], references: [id])
+  processingTxHash String?
+
+  distributorId   Int?
+  distributor     User?    @relation("DistributorProducts", fields: [distributorId], references: [id])
+
+  retailerId      Int?
+  retailer        User?    @relation("RetailerProducts", fields: [retailerId], references: [id])
+  retailTxHash    String?
+
+  imageUrl        String?
+  rating          Decimal  @default(0)
+  reviewCount     Int      @default(0)
+
+  // Relations
+  shipments          Shipment[]
+  packaging          Packaging[]
+  processingDetails  ProcessingDetails[]
+  qualityChecks      QualityCheck[]
+  supplyChainRecords SupplyChainRecord[]
+}
+
+model Shipment {
+  id              Int      @id @default(autoincrement())
+  productId       Int
+  product         Product  @relation(fields: [productId], references: [id])
+  
+  distributorId   Int
+  distributor     User     @relation(fields: [distributorId], references: [id])
+
+  vehicleNumber   String?
+  driverName      String?
+  driverContact   String?
+  transportType   String?
+  
+  dispatchDate    DateTime?
+  deliveryDate    DateTime?
+  
+  status          String   @default("In Transit")
+  blockchainTxHash String?
+  createdAt       DateTime @default(now())
+
+  locationLogs      LocationLog[]
+  storageConditions StorageCondition[]
+  issues            ShipmentIssue[]
+}
+
+model LocationLog {
+  id           Int      @id @default(autoincrement())
+  shipmentId   Int
+  shipment     Shipment @relation(fields: [shipmentId], references: [id])
+  latitude     Float
+  longitude    Float
+  locationName String?
+  source       String   @default("Manual")
+  timestamp    DateTime @default(now())
+}
+
+model ShipmentIssue {
+  id          Int      @id @default(autoincrement())
+  shipmentId  Int
+  shipment    Shipment @relation(fields: [shipmentId], references: [id])
+  issueType   String
+  description String
+  severity    String   @default("Medium")
+  timestamp   DateTime @default(now())
+}
+
+model StorageCondition {
+  id               Int      @id @default(autoincrement())
+  shipmentId       Int
+  shipment         Shipment @relation(fields: [shipmentId], references: [id])
+  temperature      Float
+  humidity         Float
+  storageType      String   @default("Ambient")
+  thresholdBreached Boolean @default(false)
+  timestamp        DateTime @default(now())
+}
+
+model AuditLog {
+  id        Int      @id @default(autoincrement())
+  userId    Int?
+  action    String
+  details   String
+  ipAddress String?
+  timestamp DateTime @default(now())
+}
+
+model FraudLog {
+  id          Int      @id @default(autoincrement())
+  batchId     String
+  severity    String   @default("Medium")
+  issueType   String
+  description String
+  isResolved  Boolean  @default(false)
+  timestamp   DateTime @default(now())
+}
+
+model BlockchainTransaction {
+  id        Int      @id @default(autoincrement())
+  batchId   String
+  txHash    String
+  role      String
+  status    String
+  action    String
+  timestamp DateTime @default(now())
+}
+
+model Packaging {
+  id          Int      @id @default(autoincrement())
+  productId   Int
+  product     Product  @relation(fields: [productId], references: [id])
+  packageType String
+  weight      String?
+  labelInfo   String?
+  expiryDate  DateTime
+}
+
+model ProcessingDetails {
+  id             Int      @id @default(autoincrement())
+  productId      Int
+  product        Product  @relation(fields: [productId], references: [id])
+  processingType String
+  processingDate DateTime @default(now())
+  conditions     String?
+  notes          String?
+}
+
+model QualityCheck {
+  id            Int      @id @default(autoincrement())
+  productId     Int
+  product       Product  @relation(fields: [productId], references: [id])
+  grade         String
+  moistureLevel String?
+  passed        Boolean
+  remarks       String?
+}
+
+model SupplyChainRecord {
+  id            Int      @id @default(autoincrement())
+  productId     Int
+  product       Product  @relation(fields: [productId], references: [id])
+  stage         String
+  location      String?
+  temperature   Float?
+  actionDetails String?
+  performedBy   String?
+  timestamp     DateTime @default(now())
+}
+
+model SystemSetting {
+  id    Int    @id @default(autoincrement())
+  key   String @unique
+  value String
+}

@@ -6,7 +6,7 @@ import Cookies from 'js-cookie';
  * Base URL is sourced from VITE_API_URL environment variable,
  * falling back to localhost for local development.
  */
-const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:5160/api';
+const API_URL = import.meta.env.VITE_API_URL || (import.meta.env.MODE === 'production' ? '/api' : 'http://localhost:5160/api');
 
 const api = axios.create({
   baseURL: API_URL,

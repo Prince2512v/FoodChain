@@ -1,22 +1,4 @@
-import React, { useState, useContext } from 'react';
-import { AuthContext } from '../../context/AuthContext';
-import { QRCodeSVG } from 'qrcode.react';
-import { getBlockchainSigner } from '../../services/blockchain';
-
-// ─────────────────────────────────────────────────────────
-//  DeliveryStatusTracker
-//  Visual step-by-step status updater
-//  Also handles: MetaMask connect + blockchain recording
-// ─────────────────────────────────────────────────────────
-
-const STATUS_FLOW = [
-  { key: 'Packaged',          label: 'Packaged',           icon: '📦', color: 'text-indigo-500' },
-  { key: 'In Transit',        label: 'In Transit',          icon: '🚛', color: 'text-sky-500' },
-  { key: 'Out for Delivery',  label: 'Out for Delivery',    icon: '📬', color: 'text-amber-500' },
-  { key: 'Delivered',         label: 'Delivered',           icon: '✅', color: 'text-emerald-500' },
-];
-
-const ISSUE_STATUSES = ['Delayed', 'Issue Reported'];
+import api from '../../services/api';
 
 const DeliveryStatusTracker = ({ shipment }) => {
   const { token } = useContext(AuthContext);
@@ -44,32 +26,24 @@ const DeliveryStatusTracker = ({ shipment }) => {
     setAlert(null);
 
     try {
-      const res  = await fetch(`http://localhost:5160/api/distributor/status/${shipment.id}`, {
-        method:  'PUT',
-        headers: {
-          'Content-Type': 'application/json',
-          Authorization:  `Bearer ${token}`,
-        },
-        body: JSON.stringify({ status: newStatus }),
-      });
-      const data = await res.json();
-
-      if (!res.ok) {
-        setAlert({ type: 'error', msg: data.message || 'Failed to update status.' });
-        return false; // Return failure for simulation chaining
-      } else {
+      const res = await api.put(`/distributor/status/${shipment.id}`, { status: newStatus });
+      
+      if (res.status === 200) {
         setCurrentStatus(newStatus);
         setAlert({ type: 'success', msg: `✅ Status updated to: ${newStatus}` });
         
         // AUTO-TRIGGER BLOCKCHAIN RECORDING
-        // Small delay to ensure DB is settled and UI reflects change
         setTimeout(() => {
           recordOnBlockchain(newStatus);
         }, 500);
-        return true; // Return success for simulation chaining
+        return true;
+      } else {
+        setAlert({ type: 'error', msg: 'Failed to update status.' });
+        return false;
       }
-    } catch {
-      setAlert({ type: 'error', msg: 'Network error.' });
+    } catch (err) {
+      const msg = err.response?.data?.message || 'Network error.';
+      setAlert({ type: 'error', msg });
       return false;
     } finally {
       setLoading(false);
@@ -81,7 +55,7 @@ const DeliveryStatusTracker = ({ shipment }) => {
     const statusToRecord = statusOverride || currentStatus;
 
     if (!shipment?.batchId) {
-      setAlert({ type: 'warning', msg: 'No batch ID available. Ensure shipment is selected.' });
+      setAlert({ type: 'warning', msg: 'No batch ID available.' });
       return false;
     }
 
@@ -93,7 +67,6 @@ const DeliveryStatusTracker = ({ shipment }) => {
       const signer = await getBlockchainSigner();
       setWallet(await signer.getAddress());
 
-      // Contract ABI — just the updateShipment function
       const abi = [
         'function updateShipment(string memory _batchId, string memory _locationHash, string memory _status, uint256 _timestamp) public'
       ];
@@ -120,27 +93,18 @@ const DeliveryStatusTracker = ({ shipment }) => {
 
       setTxHash(hash);
 
-      const res = await fetch('http://localhost:5160/api/blockchain/shipment', {
-        method:  'POST',
-        headers: {
-          'Content-Type': 'application/json',
-          Authorization:  `Bearer ${token}`,
-        },
-        body: JSON.stringify({
-          batchId: shipment.batchId,
-          txHash:  hash,
-          status:  statusToRecord,
-        }),
+      const res = await api.post('/blockchain/shipment', {
+        batchId: shipment.batchId,
+        txHash:  hash,
+        status:  statusToRecord,
       });
 
-      const data = await res.json();
-
-      if (!res.ok) {
-        setAlert({ type: 'warning', msg: `TX sent (${hash.slice(0,16)}…) but DB save failed: ${data.message}` });
-        return false;
-      } else {
+      if (res.status === 200) {
         setAlert({ type: 'success', msg: `⛓ Blockchain recorded! Status: ${statusToRecord}` });
         return true;
+      } else {
+        setAlert({ type: 'warning', msg: `TX sent (${hash.slice(0,16)}…) but DB save failed.` });
+        return false;
       }
 
     } catch (err) {

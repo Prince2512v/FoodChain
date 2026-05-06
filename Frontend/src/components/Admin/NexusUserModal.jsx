@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import api from '../../services/api';
 
 const NexusUserModal = ({ isOpen, onClose, token }) => {
     const [users, setUsers] = useState([]);
@@ -13,11 +13,8 @@ const NexusUserModal = ({ isOpen, onClose, token }) => {
     const fetchUsers = async () => {
         setLoading(true);
         try {
-            const res = await fetch('http://localhost:5160/api/admin/users', {
-                headers: { Authorization: `Bearer ${token}` }
-            });
-            const data = await res.json();
-            setUsers(data);
+            const res = await api.get('/Admin/users');
+            setUsers(res.data);
         } catch (err) {
             console.error(err);
         } finally {

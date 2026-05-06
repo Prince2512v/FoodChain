@@ -1,6 +1,4 @@
-import React, { useState, useEffect, useContext } from 'react';
-import { Card, Form, Button, Row, Col, Alert, Spinner } from 'react-bootstrap';
-import { AuthContext } from '../../context/AuthContext';
+import api from '../../services/api';
 
 const SystemSettings = () => {
     const { token } = useContext(AuthContext);
@@ -16,11 +14,8 @@ const SystemSettings = () => {
     const fetchSettings = async () => {
         setLoading(true);
         try {
-            const res = await fetch('http://localhost:5160/api/admin/settings', {
-                headers: { Authorization: `Bearer ${token}` }
-            });
-            const data = await res.json();
-            setSettings(data);
+            const res = await api.get('/Admin/settings');
+            setSettings(res.data);
         } catch (err) {
             console.error(err);
         } finally {
@@ -32,15 +27,8 @@ const SystemSettings = () => {
         setSaving(setting.key);
         setMessage(null);
         try {
-            const res = await fetch('http://localhost:5160/api/admin/settings', {
-                method: 'POST',
-                headers: { 
-                    'Content-Type': 'application/json',
-                    Authorization: `Bearer ${token}` 
-                },
-                body: JSON.stringify(setting)
-            });
-            if (res.ok) {
+            const res = await api.post('/Admin/settings', setting);
+            if (res.status === 200) {
                 setMessage({ type: 'success', text: `Setting '${setting.key}' updated!` });
             }
         } catch (err) {

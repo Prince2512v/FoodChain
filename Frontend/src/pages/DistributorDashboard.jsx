@@ -12,7 +12,7 @@ import StorageConditionForm from '../components/Distributor/StorageConditionForm
 import DeliveryStatusTracker from '../components/Distributor/DeliveryStatusTracker';
 import IssueReportForm from '../components/Distributor/IssueReportForm';
 import LogisticsMap from '../components/Distributor/LogisticsMap';
-import UniversalMetricModal from '../components/Dashboard/UniversalMetricModal';
+import api from '../services/api';
 
 const DistributorDashboard = () => {
     const { token, user } = useContext(AuthContext);
@@ -31,10 +31,8 @@ const DistributorDashboard = () => {
         const fetchShipmentLogs = async () => {
             if (!selectedShipment) return;
             try {
-                const response = await fetch(`http://localhost:5160/api/distributor/logs/${selectedShipment.productId}`, {
-                    headers: { Authorization: `Bearer ${token}` }
-                });
-                if (response.ok) setShipmentLogs(await response.json());
+                const response = await api.get(`/distributor/logs/${selectedShipment.productId}`);
+                setShipmentLogs(response.data);
             } catch (err) {
                 console.error("Failed to fetch shipment logs:", err);
             }
@@ -46,16 +44,15 @@ const DistributorDashboard = () => {
         const fetchDashboardData = async () => {
             setLoading(true);
             try {
-                const headers = { Authorization: `Bearer ${token}` };
                 const [summaryRes, perfRes, actRes] = await Promise.all([
-                    fetch('http://localhost:5160/api/dashboard/summary', { headers }).catch(() => ({json: () => ({})})),
-                    fetch('http://localhost:5160/api/dashboard/performance', { headers }).catch(() => ({json: () => []})),
-                    fetch('http://localhost:5160/api/dashboard/recent-activities', { headers }).catch(() => ({json: () => []}))
+                    api.get('/dashboard/summary').catch(() => ({data: {}})),
+                    api.get('/dashboard/performance').catch(() => ({data: []})),
+                    api.get('/dashboard/recent-activities').catch(() => ({data: []}))
                 ]);
 
-                setSummary(await summaryRes.json());
-                setPerformance(await perfRes.json());
-                setActivities(await actRes.json());
+                setSummary(summaryRes.data);
+                setPerformance(perfRes.data);
+                setActivities(actRes.data);
             } catch (err) {
                 console.error("Distributor Dashboard error:", err);
                 setSummary({});

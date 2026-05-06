@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import api from '../../services/api';
 
 const NexusProductModal = ({ isOpen, onClose, token }) => {
     const [products, setProducts] = useState([]);
@@ -13,11 +13,8 @@ const NexusProductModal = ({ isOpen, onClose, token }) => {
     const fetchProducts = async () => {
         setLoading(true);
         try {
-            const res = await fetch('http://localhost:5160/api/Product', {
-                headers: { Authorization: `Bearer ${token}` }
-            });
-            const data = await res.json();
-            setProducts(data);
+            const res = await api.get('/Product');
+            setProducts(res.data);
         } catch (err) {
             console.error(err);
         } finally {

@@ -1,6 +1,4 @@
-import React, { useState, useEffect, useContext } from 'react';
-import { Table, Badge, Spinner, Alert } from 'react-bootstrap';
-import { AuthContext } from '../../context/AuthContext';
+import api from '../../services/api';
 
 const TransactionMonitor = () => {
     const { token } = useContext(AuthContext);
@@ -14,11 +12,8 @@ const TransactionMonitor = () => {
     const fetchTransactions = async () => {
         setLoading(true);
         try {
-            const res = await fetch('http://localhost:5160/api/admin/transactions', {
-                headers: { Authorization: `Bearer ${token}` }
-            });
-            const data = await res.json();
-            setTxs(data);
+            const res = await api.get('/Admin/transactions');
+            setTxs(res.data);
         } catch (err) {
             console.error(err);
         } finally {

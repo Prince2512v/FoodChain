@@ -1,6 +1,4 @@
-import React, { useState, useEffect, useContext } from 'react';
-import { Table, Button, Badge, Modal, Form, Spinner, InputGroup } from 'react-bootstrap';
-import { AuthContext } from '../../context/AuthContext';
+import api from '../../services/api';
 
 const UserManager = () => {
     const { token } = useContext(AuthContext);
@@ -17,11 +15,8 @@ const UserManager = () => {
     const fetchUsers = async () => {
         setLoading(true);
         try {
-            const res = await fetch('http://localhost:5160/api/admin/users', {
-                headers: { Authorization: `Bearer ${token}` }
-            });
-            const data = await res.json();
-            setUsers(data);
+            const res = await api.get('/Admin/users');
+            setUsers(res.data);
         } catch (err) {
             console.error(err);
         } finally {
@@ -32,15 +27,8 @@ const UserManager = () => {
     const handleUpdateUser = async (e) => {
         e.preventDefault();
         try {
-            const res = await fetch(`http://localhost:5160/api/admin/users/${selectedUser.id}`, {
-                method: 'PUT',
-                headers: { 
-                    'Content-Type': 'application/json',
-                    Authorization: `Bearer ${token}` 
-                },
-                body: JSON.stringify(selectedUser)
-            });
-            if (res.ok) {
+            const res = await api.put(`/Admin/users/${selectedUser.id}`, selectedUser);
+            if (res.status === 200) {
                 setShowEdit(false);
                 fetchUsers();
             }
@@ -52,11 +40,8 @@ const UserManager = () => {
     const toggleBlock = async (user) => {
         const action = user.status === 'Blocked' ? 'unblock' : 'block';
         try {
-            const res = await fetch(`http://localhost:5160/api/admin/users/${user.id}/${action}`, {
-                method: 'PUT',
-                headers: { Authorization: `Bearer ${token}` }
-            });
-            if (res.ok) fetchUsers();
+            const res = await api.put(`/Admin/users/${user.id}/${action}`);
+            if (res.status === 200) fetchUsers();
         } catch (err) {
             console.error(err);
         }
@@ -65,10 +50,7 @@ const UserManager = () => {
     const deleteUser = async (id) => {
         if (!window.confirm("Are you sure you want to delete this user?")) return;
         try {
-            await fetch(`http://localhost:5160/api/admin/users/${id}`, {
-                method: 'DELETE',
-                headers: { Authorization: `Bearer ${token}` }
-            });
+            await api.delete(`/Admin/users/${id}`);
             fetchUsers();
         } catch (err) {
             console.error(err);

@@ -33,9 +33,8 @@ const TrackProduct = () => {
         if (!history?.product?.batchId) return;
         setVerifying(true);
         try {
-            const res = await fetch(`http://localhost:5160/api/supplychain/verify/${encodeURIComponent(history.product.batchId)}`);
-            const data = await res.json();
-            setIntegrityData(data);
+            const res = await api.get(`/SupplyChain/verify/${encodeURIComponent(history.product.batchId)}`);
+            setIntegrityData(res.data);
         } catch (err) {
             console.error("Verification error:", err);
         } finally {

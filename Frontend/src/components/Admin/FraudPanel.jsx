@@ -1,5 +1,4 @@
-import React, { useState, useEffect } from 'react';
-import { Table, Badge, Button, Spinner, Alert } from 'react-bootstrap';
+import api from '../../services/api';
 
 const FraudPanel = ({ token }) => {
     const [alerts, setAlerts] = useState([]);
@@ -9,10 +8,8 @@ const FraudPanel = ({ token }) => {
     const fetchAlerts = async () => {
         setLoading(true);
         try {
-            const res = await fetch('http://localhost:5160/api/admin/fraud-alerts', {
-                headers: { Authorization: `Bearer ${token}` }
-            });
-            if (res.ok) setAlerts(await res.json());
+            const res = await api.get('/Admin/fraud-alerts');
+            setAlerts(res.data);
         } catch (err) {
             console.error("Fraud fetch error:", err);
         } finally {
@@ -27,11 +24,8 @@ const FraudPanel = ({ token }) => {
     const runAudit = async (batchId) => {
         setAuditing(batchId);
         try {
-            const res = await fetch(`http://localhost:5160/api/admin/audit/${batchId}`, {
-                method: 'POST',
-                headers: { Authorization: `Bearer ${token}` }
-            });
-            if (res.ok) {
+            const res = await api.post(`/Admin/audit/${batchId}`);
+            if (res.status === 200) {
                 alert("Audit Complete. Check alerts if anomalies were found.");
                 fetchAlerts();
             }

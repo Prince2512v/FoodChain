@@ -1,5 +1,4 @@
-import React, { useState, useContext } from 'react';
-import { AuthContext } from '../../context/AuthContext';
+import api from '../../services/api';
 
 // ─────────────────────────────────────────────────────────
 //  StorageConditionForm
@@ -73,26 +72,21 @@ const StorageConditionForm = ({ shipment }) => {
         storageType: form.storageType,
       };
 
-      const res  = await fetch('http://localhost:5160/api/distributor/storage', {
-        method:  'POST',
-        headers: {
-          'Content-Type': 'application/json',
-          Authorization:  `Bearer ${token}`,
-        },
-        body: JSON.stringify(payload),
-      });
+      const res = await api.post('/distributor/storage', payload);
+      const data = res.data;
 
-      const data = await res.json();
-
-      if (!res.ok) {
-        setAlert({ type: 'error', msg: data.message || 'Failed to record condition.' });
-      } else if (data.thresholdBreached) {
-        setAlert({ type: 'warning', msg: `⚠️ Condition recorded — THRESHOLD BREACHED! Issue auto-logged.` });
+      if (res.status === 200) {
+        if (data.thresholdBreached) {
+          setAlert({ type: 'warning', msg: `⚠️ Condition recorded — THRESHOLD BREACHED! Issue auto-logged.` });
+        } else {
+          setAlert({ type: 'success', msg: '✅ Storage condition recorded successfully.' });
+        }
       } else {
-        setAlert({ type: 'success', msg: '✅ Storage condition recorded successfully.' });
+        setAlert({ type: 'error', msg: 'Failed to record condition.' });
       }
-    } catch {
-      setAlert({ type: 'error', msg: 'Network error. Please try again.' });
+    } catch (err) {
+      const msg = err.response?.data?.message || 'Network error. Please try again.';
+      setAlert({ type: 'error', msg });
     } finally {
       setLoading(false);
     }

@@ -1,6 +1,4 @@
-import React, { useState, useEffect, useContext } from 'react';
-import { AuthContext } from '../../context/AuthContext';
-import { Row, Col, Badge, Spinner } from 'react-bootstrap';
+import api from '../../services/api';
 
 const AvailableShipments = ({ onAccepted }) => {
   const { token } = useContext(AuthContext);
@@ -17,11 +15,8 @@ const AvailableShipments = ({ onAccepted }) => {
     setLoading(true);
     setError(null);
     try {
-      const res  = await fetch('http://localhost:5160/api/distributor/available-shipments', {
-        headers: { Authorization: `Bearer ${token}` }
-      });
-      const data = await res.json();
-      setProducts(Array.isArray(data) ? data : []);
+      const res  = await api.get('/distributor/available-shipments');
+      setProducts(Array.isArray(res.data) ? res.data : []);
     } catch {
       setError('Connection failure: Unable to reach logistics node.');
     } finally {
@@ -32,13 +27,10 @@ const AvailableShipments = ({ onAccepted }) => {
   const handleAccept = async (productId, batchId) => {
     setAccepting(productId);
     try {
-      const res  = await fetch(`http://localhost:5160/api/distributor/accept/${productId}`, {
-        method:  'POST',
-        headers: { Authorization: `Bearer ${token}` }
-      });
-      const data = await res.json();
+      const res  = await api.post(`/distributor/accept/${productId}`);
+      const data = res.data;
 
-      if (res.ok) {
+      if (res.status === 200) {
         setProducts(prev => prev.filter(p => p.id !== productId));
         if (onAccepted) {
           onAccepted({

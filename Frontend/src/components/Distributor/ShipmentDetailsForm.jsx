@@ -1,5 +1,4 @@
-import React, { useState, useContext } from 'react';
-import { AuthContext } from '../../context/AuthContext';
+import api from '../../services/api';
 
 // ─────────────────────────────────────────────────────────
 //  ShipmentDetailsForm
@@ -63,24 +62,16 @@ const ShipmentDetailsForm = ({ shipment }) => {
         dispatchDate:  form.dispatchDate ? new Date(form.dispatchDate).toISOString() : null,
       };
 
-      const res  = await fetch('http://localhost:5160/api/distributor/shipment-details', {
-        method:  'POST',
-        headers: {
-          'Content-Type': 'application/json',
-          Authorization:  `Bearer ${token}`,
-        },
-        body: JSON.stringify(payload),
-      });
+      const res = await api.post('/distributor/shipment-details', payload);
 
-      const data = await res.json();
-
-      if (!res.ok) {
-        setAlert({ type: 'error', msg: data.message || 'Failed to update shipment details.' });
-      } else {
+      if (res.status === 200) {
         setAlert({ type: 'success', msg: '✅ Shipment details saved successfully!' });
+      } else {
+        setAlert({ type: 'error', msg: 'Failed to update shipment details.' });
       }
-    } catch {
-      setAlert({ type: 'error', msg: 'Network error. Please try again.' });
+    } catch (err) {
+      const msg = err.response?.data?.message || 'Network error. Please try again.';
+      setAlert({ type: 'error', msg });
     } finally {
       setLoading(false);
     }

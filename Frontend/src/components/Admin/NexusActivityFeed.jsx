@@ -1,5 +1,4 @@
-import React, { useState, useEffect, useContext } from 'react';
-import { AuthContext } from '../../context/AuthContext';
+import api from '../../services/api';
 
 const NexusActivityFeed = () => {
     const { token } = useContext(AuthContext);
@@ -8,12 +7,9 @@ const NexusActivityFeed = () => {
 
     const fetchActivities = async () => {
         try {
-            const res = await fetch('http://localhost:5160/api/admin/transactions', {
-                headers: { Authorization: `Bearer ${token}` }
-            });
-            const data = await res.json();
+            const res = await api.get('/Admin/transactions');
             // Take top 8 for the feed
-            setActivities(data.slice(0, 8));
+            setActivities(res.data.slice(0, 8));
         } catch (err) {
             console.error(err);
         } finally {

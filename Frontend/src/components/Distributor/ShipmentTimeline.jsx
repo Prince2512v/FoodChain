@@ -1,5 +1,4 @@
-﻿import React, { useState, useContext } from 'react';
-import { AuthContext } from '../../context/AuthContext';
+import api from '../../services/api';
 
 // ─────────────────────────────────────────────────────────
 //  ShipmentTimeline
@@ -30,17 +29,11 @@ const ShipmentTimeline = ({ shipment }) => {
     setAlert(null);
     setHistory(null);
     try {
-      const res  = await fetch(`http://localhost:5160/api/distributor/history/${encodeURIComponent(bid)}`, {
-        headers: { Authorization: `Bearer ${token}` }
-      });
-      const data = await res.json();
-      if (!res.ok) {
-        setAlert({ type: 'error', msg: data.message || 'Failed to fetch history.' });
-      } else {
-        setHistory(data);
-      }
-    } catch {
-      setAlert({ type: 'error', msg: 'Network error.' });
+      const res = await api.get(`/Distributor/history/${encodeURIComponent(bid)}`);
+      setHistory(res.data);
+    } catch (err) {
+      const serverMsg = err.response?.data?.message || err.response?.data || 'Failed to fetch history.';
+      setAlert({ type: 'error', msg: serverMsg });
     } finally {
       setLoading(false);
     }

@@ -1,6 +1,4 @@
-import React, { useState, useEffect, useContext } from 'react';
-import { Table, Spinner, Form } from 'react-bootstrap';
-import { AuthContext } from '../../context/AuthContext';
+import api from '../../services/api';
 
 const AuditLogViewer = () => {
     const { token } = useContext(AuthContext);
@@ -15,11 +13,8 @@ const AuditLogViewer = () => {
     const fetchLogs = async () => {
         setLoading(true);
         try {
-            const res = await fetch('http://localhost:5160/api/admin/audit-logs', {
-                headers: { Authorization: `Bearer ${token}` }
-            });
-            const data = await res.json();
-            setLogs(data);
+            const res = await api.get('/Admin/audit-logs');
+            setLogs(res.data);
         } catch (err) {
             console.error(err);
         } finally {

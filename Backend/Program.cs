@@ -46,8 +46,22 @@ builder.Services.AddSwaggerGen(c =>
 });
 
 // DbContext
+var databaseUrl = builder.Configuration["DATABASE_URL"] ?? Environment.GetEnvironmentVariable("DATABASE_URL");
+var usePostgres = !string.IsNullOrEmpty(databaseUrl) || builder.Configuration["DB_TYPE"] == "Postgres";
+
 builder.Services.AddDbContext<ApplicationDbContext>(options =>
-    options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")));
+{
+    if (usePostgres)
+    {
+        // Support for Supabase / PostgreSQL
+        options.UseNpgsql(databaseUrl ?? builder.Configuration.GetConnectionString("PostgresConnection"));
+    }
+    else
+    {
+        // Default to SQL Server for local development
+        options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection"));
+    }
+});
 
 // Blockchain Service
 builder.Services.AddSingleton<BlockchainService>();

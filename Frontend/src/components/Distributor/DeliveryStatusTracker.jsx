@@ -1,4 +1,16 @@
+import React, { useState, useContext, useEffect } from 'react';
+import { AuthContext } from '../../context/AuthContext';
+import { getBlockchainSigner } from '../../services/blockchain';
+import { QRCodeSVG } from 'qrcode.react';
 import api from '../../services/api';
+
+const STATUS_FLOW = [
+  { key: 'In Transit',        label: 'In Transit',        icon: <i className="bi bi-truck"></i> },
+  { key: 'Out for Delivery',  label: 'Out for Delivery',  icon: <i className="bi bi-mailbox"></i> },
+  { key: 'Delivered',         label: 'Delivered',         icon: <i className="bi bi-check-circle"></i> },
+];
+
+const ISSUE_STATUSES = ['Delayed', 'Issue Reported', 'Damaged', 'Rejected'];
 
 const DeliveryStatusTracker = ({ shipment }) => {
   const { token } = useContext(AuthContext);

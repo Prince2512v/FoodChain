@@ -1,3 +1,5 @@
+import React, { useState, useContext } from 'react';
+import { AuthContext } from '../../context/AuthContext';
 import api from '../../services/api';
 
 // ─────────────────────────────────────────────────────────

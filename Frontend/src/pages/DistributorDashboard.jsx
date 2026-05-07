@@ -12,6 +12,7 @@ import StorageConditionForm from '../components/Distributor/StorageConditionForm
 import DeliveryStatusTracker from '../components/Distributor/DeliveryStatusTracker';
 import IssueReportForm from '../components/Distributor/IssueReportForm';
 import LogisticsMap from '../components/Distributor/LogisticsMap';
+import UniversalMetricModal from '../components/Dashboard/UniversalMetricModal';
 import api from '../services/api';
 
 const DistributorDashboard = () => {

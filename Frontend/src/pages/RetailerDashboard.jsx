@@ -9,6 +9,7 @@ import InventoryList from '../components/Retailer/InventoryList';
 import PendingShipments from '../components/Retailer/PendingShipments';
 import VerificationModal from '../components/Retailer/VerificationModal';
 import ManualStockModal from '../components/Retailer/ManualStockModal';
+import AdjustStockModal from '../components/Retailer/AdjustStockModal';
 import UniversalMetricModal from '../components/Dashboard/UniversalMetricModal';
 import api from '../services/api';
 
@@ -23,6 +24,8 @@ const RetailerDashboard = () => {
     const [activeTab, setActiveTab] = useState('inventory');
     const [verifyingShipment, setVerifyingShipment] = useState(null);
     const [showManualModal, setShowManualModal] = useState(false);
+    const [showAdjustModal, setShowAdjustModal] = useState(false);
+    const [adjustingItem, setAdjustingItem] = useState(null);
     const [showMetricModal, setShowMetricModal] = useState(false);
     const [selectedMetric, setSelectedMetric] = useState(null);
     const navigate = useNavigate();
@@ -73,6 +76,17 @@ const RetailerDashboard = () => {
             await fetchDashboardData();
         } catch (err) {
             console.error("Reception failed:", err.response?.data || err.message);
+        }
+    };
+
+    const handleAdjustInventory = async (id, updateData) => {
+        try {
+            await api.put(`/retailer/inventory/${id}`, updateData);
+            setShowAdjustModal(false);
+            setAdjustingItem(null);
+            await fetchDashboardData();
+        } catch (err) {
+            console.error("Adjustment failed:", err.response?.data || err.message);
         }
     };
 
@@ -194,7 +208,10 @@ const RetailerDashboard = () => {
                     {activeTab === 'inventory' ? (
                         <InventoryList 
                             inventory={inventory} 
-                            onUpdate={() => {}} 
+                            onUpdate={(item) => {
+                                setAdjustingItem(item);
+                                setShowAdjustModal(true);
+                            }} 
                             onNewEntry={() => setShowManualModal(true)}
                         />
                     ) : (
@@ -215,6 +232,13 @@ const RetailerDashboard = () => {
                 show={showManualModal} 
                 onHide={() => setShowManualModal(false)}
                 onConfirm={handleManualEntry}
+            />
+
+            <AdjustStockModal 
+                show={showAdjustModal} 
+                onHide={() => setShowAdjustModal(false)}
+                item={adjustingItem}
+                onConfirm={handleAdjustInventory}
             />
 
             <UniversalMetricModal 

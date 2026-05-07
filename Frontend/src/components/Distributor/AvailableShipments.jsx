@@ -1,3 +1,6 @@
+import React, { useState, useEffect, useContext } from 'react';
+import { Row, Col, Badge, Spinner } from 'react-bootstrap';
+import { AuthContext } from '../../context/AuthContext';
 import api from '../../services/api';
 
 const AvailableShipments = ({ onAccepted }) => {

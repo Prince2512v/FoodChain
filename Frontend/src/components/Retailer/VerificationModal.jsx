@@ -18,6 +18,25 @@ const VerificationModal = ({ shipment, onClose, onConfirm }) => {
     const verifyOnChain = async () => {
         try {
             setVerifying(true);
+            setError(null);
+
+            // Handle Simulation Mode
+            if (localStorage.getItem('SIMULATION_MODE') === 'true') {
+                console.log("SIMULATION: Mocking blockchain verification...");
+                await new Promise(resolve => setTimeout(resolve, 1500)); // Simulate network lag
+                setBlockchainData({
+                    batchId: shipment.product.batchId,
+                    name: shipment.product.productName,
+                    farmer: "0x70997970C51812dc3A010C7d01b50e0d17dc79C8",
+                    status: 'Delivered'
+                });
+                return;
+            }
+
+            if (!window.ethereum) {
+                throw new Error("MetaMask not found. Please enable Simulation Mode in the menu.");
+            }
+
             const provider = new ethers.BrowserProvider(window.ethereum);
             const contract = new ethers.Contract(CONTRACT_ADDRESS, CONTRACT_ABI, provider);
             
@@ -31,13 +50,13 @@ const VerificationModal = ({ shipment, onClose, onConfirm }) => {
             });
         } catch (err) {
             console.error('Blockchain verification failed:', err);
-            setError('Failed to fetch blockchain data. Ensure MetaMask is connected.');
+            setError(err.message || 'Verification failed');
         } finally {
             setVerifying(false);
         }
     };
 
-    const isAuthentic = blockchainData && blockchainData.status === 'Delivered';
+    const isAuthentic = blockchainData && (blockchainData.status === 'Delivered' || blockchainData.status === 'Shipping' || blockchainData.status === 'In Transit');
 
     return (
         <div className="ret-modal-overlay bg-dark bg-opacity-50" style={{ position: 'fixed', inset: 0, backdropFilter: 'blur(4px)', display: 'grid', placeItems: 'center', zIndex: 2000 }}>

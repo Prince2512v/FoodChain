@@ -20,17 +20,17 @@ const UniversalMetricModal = ({ isOpen, onClose, type, role }) => {
             // Determine endpoint based on role and type
             if (role === 'Admin') {
                 switch (type.toLowerCase()) {
-                    case 'nodes': endpoint = '/Admin/users'; break;
-                    case 'volume': endpoint = '/Admin/transactions'; break;
-                    case 'alerts': endpoint = '/Admin/fraud-alerts'; break;
+                    case 'nodes': endpoint = '/admin/users'; break;
+                    case 'volume': endpoint = '/admin/transactions'; break;
+                    case 'alerts': endpoint = '/admin/fraud-alerts'; break;
                     default: endpoint = '/Product';
                 }
             } else {
                 switch (role) {
-                    case 'Farmer': endpoint = '/Farmer/products'; break;
-                    case 'Processor': endpoint = '/Processor/products'; break;
-                    case 'Distributor': endpoint = '/Distributor/products'; break;
-                    case 'Retailer': endpoint = '/Retailer/products'; break;
+                    case 'Farmer': endpoint = '/farmer/products'; break;
+                    case 'Processor': endpoint = '/processor/products'; break;
+                    case 'Distributor': endpoint = '/distributor/products'; break;
+                    case 'Retailer': endpoint = '/retailer/products'; break;
                     default: endpoint = '/Product';
                 }
             }

@@ -6,8 +6,8 @@ generator client {
 }
 
 datasource db {
-  provider = "postgresql"
-  url      = env("DATABASE_URL")
+  provider = "sqlite"
+  url      = "file:./dev.db"
 }
 
 model User {
@@ -25,6 +25,7 @@ model User {
   distributorProducts Product[] @relation("DistributorProducts")
   retailerProducts   Product[] @relation("RetailerProducts")
   shipments          Shipment[]
+  receipts           RetailerReceipt[]
 }
 
 model Product {
@@ -78,6 +79,9 @@ model Product {
   processingDetails  ProcessingDetails[]
   qualityChecks      QualityCheck[]
   supplyChainRecords SupplyChainRecord[]
+  receipts           RetailerReceipt[]
+  inventory          RetailInventory[]
+  feedback           Feedback[]
 }
 
 model Shipment {
@@ -213,3 +217,39 @@ model SystemSetting {
   key   String @unique
   value String
 }
+
+model RetailerReceipt {
+  id              Int      @id @default(autoincrement())
+  productId       Int
+  product         Product  @relation(fields: [productId], references: [id])
+  retailerId      Int
+  retailer        User     @relation(fields: [retailerId], references: [id])
+  conditionStatus String
+  remarks         String?
+  blockchainTxHash String?
+  receivedDate    DateTime @default(now())
+}
+
+model RetailInventory {
+  id                Int      @id @default(autoincrement())
+  productId         Int
+  product           Product  @relation(fields: [productId], references: [id])
+  retailerId        Int
+  totalQuantity     Decimal
+  soldQuantity      Decimal  @default(0)
+  remainingQuantity Decimal
+  price             Decimal  @default(0)
+  status            String   @default("In Stock")
+  lastUpdated       DateTime @default(now())
+}
+
+model Feedback {
+  id        Int      @id @default(autoincrement())
+  productId Int
+  product   Product  @relation(fields: [productId], references: [id])
+  userId    Int
+  rating    Int
+  comment   String?
+  timestamp DateTime @default(now())
+}
+
